@@ -1,0 +1,9 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+/build
+/nbproject
+/statistics.pdf
+/dist
+.xml
+.log
