@@ -58,12 +58,12 @@ public class ShowStatistics extends javax.swing.JFrame {
     /**
      * Creates new form ShowStatistics
      */
-    //Μέθοδος που παραμετροποιεί τα 3 πρώτα κελιά ενός πίνακα pdf
+    //Method that sets the first 3 cells of a pdf array
     private void addTableHeader(PdfPTable table) throws IOException, DocumentException {
-        //Δημιουργία επιθυμητού φόντου που εμφανίζει και ελληνικούς χαρακτήρες
+        //Create desired background that also displays Greek characters
         BaseFont baseFont = BaseFont.createFont("c:/windows/fonts/arial.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
         baseFont.setSubset(true);
-        //Ονόματα για το πρώτο κελί κάθε στήλης του πίνακα και επιθυμητό χρώμα και μέγεθος γραμματοσειράς
+        //Names for the first cell of each table column and desired font color and size
         Stream.of("Αριθμός", "Εμφανίσεις", "Καθυστερήσεις")
                 .forEach(columnTitle -> {
                     PdfPCell header = new PdfPCell();
@@ -75,7 +75,7 @@ public class ShowStatistics extends javax.swing.JFrame {
                 });
     }
 
-    //Μέθοδος που γεμίζει οριζόντια τα κελιά του πίνακα στο pdf αρχείο (Πίνακας που δείχνει στατιστικά για όλους τους αριθμούς)
+    //Method that horizontally fills the table cells in the pdf file (Table showing statistics for all numbers)
     private void addNumberRows(PdfPTable table, JTable numbersTable) throws DocumentException, IOException {
         for (int i = 0; i < 45; i++) {
             for (int j = 0; j < 3; j++) {
@@ -84,7 +84,7 @@ public class ShowStatistics extends javax.swing.JFrame {
         }
     }
 
-    //Μέθοδος που γεμίζει οριζόντια τα κελιά του πίνακα στο pdf αρχείο (Πίνακας που δείχνει στατιστικά για τους αριθμούς τζόκερ)
+    //Method that horizontally fills the table cells in the pdf file (Table showing statistics for wildcard numbers)
     private void addBonusRows(PdfPTable table, JTable numbersTable) throws DocumentException, IOException {
         for (int i = 0; i < 20; i++) {
             for (int j = 0; j < 3; j++) {
@@ -104,75 +104,73 @@ public class ShowStatistics extends javax.swing.JFrame {
                         JOptionPane.YES_NO_OPTION);
 
                 if (JOptionPane.YES_OPTION == result) {
-                    //Kαταστροφή παραθύρου
                     dispose();
-                    //Τερματισμός
                     System.exit(0);
                 }
             }
         });
 
-        //Όταν ανοίγει η οθόνη ShowStatistics εμφανίζονται 
-        //αυτόματα τα στατιστικά κληρώσεων joker από 2000-01-01 έως την πιο πρόσφατη κλήρωση
+        //When the ShowStatistics screen opens, draw stats are displayed
+        //automatically from 2000-01-01 to most recent draw
         FromDateComboBox.setMaximumRowCount(6); //Max γραμμές combobox 6
         ToDateComboBox.setMaximumRowCount(6); //Max γραμμές combobox 6
 
-        //Μεταβλητές που αποθηκεύουν τις ημερομηνίες για 2000-01-01 και σήμερα
+        //Variables that store the dates for 2000-01-01 and today
         LocalDate startDate = LocalDate.of(2000, 01, 01);
         LocalDate endDate = LocalDate.now();
         long numOfDays = ChronoUnit.DAYS.between(startDate, endDate);
-        //Για τα έτη 2000 έως 2022 φτιάξε λίστα με ημερομηνίες 
+        //For the years 2000 to 2022 make a list of dates
         List<LocalDate> listOfDates1 = Stream.iterate(startDate, date -> date.plusDays(1))
                 .limit(numOfDays + 1)
                 .collect(Collectors.toList());
 
-        //Πρόσθεσε στo ToDateCombobox ημερομηνίες
+        //Add dates to the ToDateCombobox
         for (int i = 0; i < listOfDates1.size(); i++) {
             ToDateComboBox.addItem(listOfDates1.get(i).toString());
         }
 
-        //Πρόσθεσε στo FromDateCombobox  ημερομηνίες
+        //Add dates to the FromDateCombobox
         for (int i = 0; i < listOfDates1.size(); i++) {
             FromDateComboBox.addItem(listOfDates1.get(i).toString());
         }
 
-        //Eκκίνηση προσπάθειας κλήσης url που προβάλλει στατιστικά για τις κληρώσεις τζόκερ από την πρώτη κλήρωση έως την πιο πρόσφατη 
-        //Διαδικασία για κλήση url
-        //Περνάμε το url που θα καλέσουμε σε ενα string
+        //Initialize call attempt url that displays stats for joker draws from first draw to most recent
+        //Procedure to call url
+        //We pass the url to be called to a string
         String urlToCall = "https://api.opap.gr/games/v1.0/5104/statistics";
 
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder().url(urlToCall).build();
 
-        //Καλούμε το κατάλληλο url 
+        //Call the appropriate url
         try (Response response = client.newCall(request).execute()) {
             if (response.isSuccessful() && response.body() != null) {
                 String responseString = response.body().string();
 
-                //Δημιουργούμε ένα αντικείμενο GsonBuilder
+                //Create a GsonBuilder object
                 GsonBuilder builder = new GsonBuilder();
                 builder.setPrettyPrinting();
                 Gson gson = builder.create();
 
-                //Παίρνουμε τα επιθυμητά αποτελέσματα σε JsonArray 
+                //Get the desired results in JsonArray
                 JsonObject json = gson.fromJson(responseString, JsonObject.class);
                 JsonArray numbers = json.getAsJsonArray("numbers");
                 JsonArray bonusNumbers = json.getAsJsonArray("bonusNumbers");
 
-                //Φτιάχνουμε βοηθητικές λίστες για να αντλήσουμε από το json δεδομένα
+                //Create helper lists to pull data from the json
                 ArrayList<String> occurrences = new ArrayList<>();
                 ArrayList<String> delays = new ArrayList<>();
                 ArrayList<String> numbersList = new ArrayList<>();
                 ArrayList<String> bonusList = new ArrayList<>();
 
-                //Παραμετροποιούμε τον πίνακα που θα εμφανίζει τα στατιστικά δεδομένα
+                //Parameterize the table that will display the statistical data
                 DefaultTableModel model = (DefaultTableModel) numbersTable.getModel();
                 String[] columnNames = {"Αριθμός", "Εμφανίσεις", "Καθυστερήσεις"};
                 model.setColumnIdentifiers(columnNames);
                 int i = 0;
 
-                //Άντληση στατιστικών δεδομένων από json και καθορισμός τιμών στον πίνακα στατιστικών δεδομένων
+                //Fetch statistics data from json and set values in statistics table
                 for (JsonElement number : numbers) {
                     JsonObject numberStatistics = number.getAsJsonObject();
                     occurrences.add(numberStatistics.get("occurrences").getAsString());
@@ -183,18 +181,18 @@ public class ShowStatistics extends javax.swing.JFrame {
                     model.addRow(rowValues);
                     i++;
                 }
-                //Eμφάνισε τον πίνακα στο jframe
+                //Display the table in the jframe
                 numbersPane.getViewport().add(numbersTable);
 
-                //Καθαρίζουμε τα ArrayLists occurrences και delays για να περάσουμε τα δεδομένα για τους bonus αριθμούς
+                //Clear the ArrayLists occurrences and delays to pass the data for the bonus numbers
                 occurrences.clear();
                 delays.clear();
-                //Παραμετροποιούμε τον πίνακα που θα εμφανίζει τα στατιστικά δεδομένα
+                //Parameterize the table that will display the statistical data
                 DefaultTableModel model1 = (DefaultTableModel) bonusTable.getModel();
                 model1.setColumnIdentifiers(columnNames);
                 i = 0;
 
-                //Άντληση στατιστικών δεδομένων από json και καθορισμός τιμών στον πίνακα στατιστικών δεδομένων
+                //Fetch statistics data from json and set values in statistics table
                 for (JsonElement bonus : bonusNumbers) {
                     JsonObject bonusStatistics = bonus.getAsJsonObject();
                     occurrences.add(bonusStatistics.get("occurrences").getAsString());
@@ -205,10 +203,10 @@ public class ShowStatistics extends javax.swing.JFrame {
                     model1.addRow(rowValues);
                     i++;
                 }
-                //Eμφάνισε τον πίνακα στο jframe
+                //Display the table in the jframe
                 bonusPane.getViewport().add(bonusTable);
 
-                //Αντλούμε από το json το εύρος ημερομηνιών για το οποίο ισχύουν τα στατιστικά δεδομένα
+                //Fetch from the json the date range for which the statistics apply
                 JsonObject header = json.getAsJsonObject("header");
 
                 Date dateTo = new Date(header.get("dateTo").getAsLong() * 1000);
@@ -216,7 +214,7 @@ public class ShowStatistics extends javax.swing.JFrame {
                 String pattern = "yyyy-MM-dd";
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 
-                //Βάζουμε τις ημερομηνίες για τις οποίες ισχύουν τα στατιστικά δεδομένα στο label του αντίστοιχου πίνακα
+                //We put the dates for which the statistical data are valid in the label of the corresponding table
                 apiOrBdLabel.setForeground(new java.awt.Color(222, 222, 222));
                 apiOrBdLabel.setText("[API]");
                 statisticsDatesLabel1.setForeground(new java.awt.Color(222, 222, 222));
@@ -224,13 +222,13 @@ public class ShowStatistics extends javax.swing.JFrame {
                 statisticsDatesLabel1.setText("Στατιστικά δεδομένα κληρώσεων από");
                 statisticsDatesLabel2.setText("" + simpleDateFormat.format(dateFrom) + " έως " + simpleDateFormat.format(dateTo) + ".");
 
-                //Βάζουμε τα combobox να δείχνουν επιλεγμένες ημερομηνίες το εύρος από το οποίο αντλήθηκαν αυτά τα στατιστικά
+                //Make the comboboxes show selected dates the range from which these statistics were drawn
                 FromDateComboBox.setSelectedItem(simpleDateFormat.format(dateFrom));
                 ToDateComboBox.setSelectedItem(simpleDateFormat.format(dateTo));
             }
-            //Αποτυχία κλήσης URL
+            //Case URL call failed
         } catch (IOException e) {
-            //Ενημερωτικό μήνυμα
+            //Informative message
             JOptionPane.showMessageDialog(null, "Πρόβλημα κλήσης URL. Προσπαθήστε ξανά.", "Σφάλμα", JOptionPane.INFORMATION_MESSAGE);
         }
     }
@@ -417,66 +415,61 @@ public class ShowStatistics extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void returnHomeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_returnHomeButtonActionPerformed
-        //Δημιούργησε ένα αντικείμενο τύπου Home
         Home home = new Home();
-        //Κάνε το αντικείμενο τύπου Home ορατό (Επιστροφή στην αρχική οθόνη)
         home.setVisible(true);
-        //Κάνε το παράθυρο Διαχείρισης δεδομένων όχι ορατό
         this.setVisible(false);
-        //Κλείσε το παράθυρο Διαχείρισης δεδομένων
         this.setDefaultCloseOperation(this.EXIT_ON_CLOSE);
-        //Κατέστρεψε το παράθυρο διαχείρισης δεδομένων
         this.dispose();
     }//GEN-LAST:event_returnHomeButtonActionPerformed
 
     private void saveStatisticsToPdfButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveStatisticsToPdfButtonActionPerformed
-        //Δημιουργία νέου εγγράφου
+        //Create new document
         Document document = new Document();
         try {
-            //Ονομασία εγγράφου statistics.pdf
+            //Document name statistics.pdf
             PdfWriter.getInstance(document, new FileOutputStream("statistics.pdf"));
-            //Άνοιγμα αρχείου
+            //Open file
             document.open();
-            //Oρισμός γραμματοσειράς arial
+            //Define arial font
             BaseFont baseFont = BaseFont.createFont("c:/windows/fonts/arial.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
             baseFont.setSubset(true);
             Font font = new Font(baseFont, 14, Font.BOLD);
-            //Δημιουργία τίτλου εγγράφου
+            //Create document title
             Chunk chunk1 = new Chunk("               Στατιστικά στοιχεία κληρώσεων από " + FromDateComboBox.getSelectedItem().toString()
                     + " έως " + ToDateComboBox.getSelectedItem() + "\n", font);
-            //Προσθήκη τίτλου εγγράφου στο κείμενο
+            //Add document title to text
             document.add(new Paragraph(chunk1));
-            //Δημιουργία τίτλων πινάκων
+            //Create table titles
             Chunk chunk2 = new Chunk("             *Αριθμοί*", font);
             Chunk chunk3 = new Chunk("             *Τζόκερ Αριθμοί*", font);
 
-            //Κενή γραμμή
+            //Empty line
             document.add(Chunk.NEWLINE);
 
-            //Δημιουργία πίνακα με 3 στήλες για τους αριθμούς που κληρώνονται
+            //Create a 3-column table for the numbers being drawn
             PdfPTable numbersTab = new PdfPTable(3);
-            //Δημιουργία πίνακα με 3 στήλες για τους αριθμούς τζόκερ που κληρώνονται
+            //Create a 3-column array for the wildcard numbers drawn
             PdfPTable bonusTab = new PdfPTable(3);
-            //Προσθήκη επικεφαλίδας σε κάθε στήλη
+            //Add header to each column
             addTableHeader(numbersTab);
             addTableHeader(bonusTab);
-            //Προσθήκη περιεχομένων jtables στους αντίστοιχους πίνακες για το pdf αρχείο
+            //Add jtables contents to the corresponding tables for the pdf file
             addNumberRows(numbersTab, numbersTable);
             addBonusRows(bonusTab, bonusTable);
 
-            //Προσθήκη τίτλου πίνακα αριθμών
+            //Add number table title
             document.add(new Paragraph(chunk2));
-            //Προσθήκη πινάκων στο έγγραφο και μία κενή γραμμή μεταξύ τους
+            //Add tables to the document and a blank line between them
             document.add(numbersTab);
             document.add(Chunk.NEWLINE);
-            //Προσθήκη τίτλου πίνακα τζόκερ αριθμών
+            //Add title to the table of joker names
             document.add(new Paragraph(chunk3));
             document.add(bonusTab);
-            //Κλείσιμο αρχείου
+            //Close file
             document.close();
             JOptionPane.showMessageDialog(null, "Το αρχείο pdf δημιουργήθηκε επιτυχώς.", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
 
-            //Προσπάθεια εμφάνισης pdf αρχείου 
+            //Προσπάθεια εμφάνισης pdf αρχείου
             File file = new File("statistics.pdf");
             try {
                 Desktop.getDesktop().open(file);
@@ -496,7 +489,6 @@ public class ShowStatistics extends javax.swing.JFrame {
     }//GEN-LAST:event_saveStatisticsToPdfButtonActionPerformed
 
     private void showGraphicStatisticsDataButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showGraphicStatisticsDataButtonActionPerformed
-        //Δημιουργία αντικειμένου τύπου jframe StatisticsSelection
         StatisticsSelection st = new StatisticsSelection();
         st.setVisible(true);
     }//GEN-LAST:event_showGraphicStatisticsDataButtonActionPerformed
@@ -510,31 +502,31 @@ public class ShowStatistics extends javax.swing.JFrame {
     }//GEN-LAST:event_ToDateComboBoxActionPerformed
 
     private void showStatisticsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showStatisticsButtonActionPerformed
-        //Αποτέλεσμα αναζήτησης με εύρος ημερομηνιών
+        //Search result with date range
 
-        //Αρχικοποιούμε τη μπάρα εργασίας που δείχνει πόσο προχωράνε οι εργασίες στο background
+        //Initialize the taskbar that shows how far background tasks are progressing
         int value = 0;
         showStatisticsProgressBar.setValue(value);
         showStatisticsProgressBar.setMinimum(0);
         showStatisticsProgressBar.setMaximum(100);
         showStatisticsProgressBar.update(showStatisticsProgressBar.getGraphics());
 
-        //Αν ο χρήστης έχει εισάγει ημερομηνίες
+        //If the user has entered dates
         if (((FromDateComboBox.getSelectedItem() != null) && (ToDateComboBox.getSelectedItem() != null))) {
 
-            //Έλεγχος αν ημερομηνία είναι σε σωστή μορφή
+            //Check if date is in correct format
             DateValidator validator = new DateValidatorUsingDateFormat("yyyy-mm-dd");
             if (!validator.isValid(FromDateComboBox.getSelectedItem().toString()) || !validator.isValid(ToDateComboBox.getSelectedItem().toString())) {
                 JOptionPane.showMessageDialog(null, "Οι ημερομηνίες δεν είναι σε σωστή μορφή (εεεε-μμ-ηη).", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
 
-            //Έλεγχος αν η ημερομηνία είναι έγκυρη (πχ 2022-02-30 είναι άκυρη ημερομηνία)
+            //Check if the date is valid (eg 2022-02-30 is an invalid date)
             try {
                 LocalDate fromDate = LocalDate.parse(FromDateComboBox.getSelectedItem().toString());
                 LocalDate toDate = LocalDate.parse(ToDateComboBox.getSelectedItem().toString());
 
-                //Έλεγχος αν οι εισαγώμενες ημερομηνίες είναι μέχρι σήμερα
+                //Check if the entered dates are up to date
                 if (LocalDate.now().isBefore(fromDate) || LocalDate.now().isBefore(toDate)) {
                     JOptionPane.showMessageDialog(null, "Έχετε εισάγει ημερομηνίες που ξεπερνούν τη σημερινή ημέρα. Προσπαθήστε ξανά.", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
                     return;
@@ -545,26 +537,26 @@ public class ShowStatistics extends javax.swing.JFrame {
                 return;
             }
 
-            //Υπολογίζουμε από πόσες ημέρες επιλέγει ο χρήστης να αντλήσει πληροφορίες διότι μπορεί να αντλήσει πληροφορίες έως 3 μηνών (94 ημερών)
+            //We calculate from how many days the user chooses to get information from because he can get information up to 3 months (94 days)
             LocalDate fromDate = LocalDate.parse(FromDateComboBox.getSelectedItem().toString());
             LocalDate toDate = LocalDate.parse(ToDateComboBox.getSelectedItem().toString());
             long fromDateDays = fromDate.toEpochDay();
             long toDateDays = toDate.toEpochDay();
             long duration = toDateDays - fromDateDays + 1;
 
-            //Ενημερωτικό μήνυμα προς το χρήστη σε περίπτωση που η fromDate ημερομηνία είναι μεγαλύτερη από την toDate ημερομηνία
+            //Informative message to the user in case the fromDate date is greater than the toDate date
             if (duration < 0) {
                 JOptionPane.showMessageDialog(null, "Λάθος εισαγωγή εύρους ημερομηνιών. Προσπαθήστε ξανά. ", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
 
-            //Αρχικοποιούμε τη ζώνη ώρας γιατί θα μας χρειαστεί στις μετατροπές ημερομηνιών
+            //Initialize the timezone because we will need it in date conversions
             ZoneId defaultZoneId = ZoneId.systemDefault();
-            //Δημιουργούμε μία λίστα με αντικείμενα τύπου Draw για να αποθηκεύσουμε τα δεδομένα που αντλούμε από το json
+            //Create a list of Draw objects to store the data we pull from the json
             List<Draws> draws = new ArrayList<>();
-            //Αν το εύρος ημερομηνιών που εισάγει ο χρήστης ξεπερνάει τις 94 ημέρες
-            //το url δεν επιστρέφει δεδομένα
-            //Οπότε "σπάμε" τις ημερομηνίες σε κομμάτια και καλούμε το url για να αντλήσουμε δεδομένα ανά "κομμάτι"
+            //If the date range entered by the user exceeds 94 days
+            //url returns no data
+            //So we "break" the dates into chunks and call the url to fetch data per "chunk"
             while (duration > 94) {
 
                 toDate = fromDate.plusDays(93);
@@ -574,32 +566,32 @@ public class ShowStatistics extends javax.swing.JFrame {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
                 String df = simpleDateFormat.format(dateFrom);
                 String dt = simpleDateFormat.format(dateTo);
-                //Eνημερώνουμε τη μπάρα εργασίας πόσο πρέπει να γεμίσει
+                //Inform the taskbar how much it should fill
                 value++;
                 showStatisticsProgressBar.setValue(value);
                 showStatisticsProgressBar.update(showStatisticsProgressBar.getGraphics());
 
-                //Διαδικασία για κλήση url
-                //Περνάμε το url που θα καλέσουμε σε ενα string
+                //Procedure to call url
+                //We pass the url to be called to a string
                 String urlToCall = "https://api.opap.gr/draws/v3.0/5104/draw-date/" + df + "/" + dt + "/?limit=180";
                 OkHttpClient client = new OkHttpClient();
 
                 Request request = new Request.Builder().url(urlToCall).build();
 
-                //Καλούμε το κατάλληλο url 
+                //Call the proper url
                 try (Response response = client.newCall(request).execute()) {
                     if (response.isSuccessful() && response.body() != null) {
                         String responseString = response.body().string();
 
-                        //Διαδικασία άντλησης των δεδομένων του Json
-                        //Δημιουργούμε ένα αντικείμενο GsonBuilder
+                        //Process to extract the Json data
+                        //Create a GsonBuilder object
                         GsonBuilder builder = new GsonBuilder();
                         Gson gson = builder.create();
-                        //Δημιουργούμε ένα JsonObject που περιέχει το Json που αντλήσαμε
+                        //Create a JsonObject that contains the Json we extracted
                         JsonObject jsonObj = gson.fromJson(responseString, JsonObject.class);
-                        //Δημιουργούμε ενα JsonArray που περιέχει τα Objects 
+                        //Create a JsonArray containing the Objects
                         JsonArray content = jsonObj.getAsJsonArray("content");
-                        //Aντλούμε τα δεδομένα από το json και τα περνάμε σε μια λίστα που περιέχει αντικείμενα τύπου draw
+                        //We extract the data from the json and pass it to a list containing objects of type draw
                         for (JsonElement draw : content) {
                             int drawId = draw.getAsJsonObject().get("drawId").getAsInt();
                             long drawTime = draw.getAsJsonObject().get("drawTime").getAsLong();
@@ -616,7 +608,7 @@ public class ShowStatistics extends javax.swing.JFrame {
 
                         }
 
-                        //Yπολογίζουμε τις νέες ημερομηνίες για τις οποίες θα πραγματοποιηθεί κλήση Url
+                        //Calculate the new dates for which Url will be called
                         duration = duration - 94;
                         fromDate = toDate.plusDays(1);
                         if (duration == 0) {
@@ -626,14 +618,14 @@ public class ShowStatistics extends javax.swing.JFrame {
                         }
 
                     } else {
-                        //Ενημερωτικό μήνυμα σε περίπτωση λανθασμένης εισαγωγής ημερομηνιών (FromDate>ToDate)
+                        //Informative message in case of incorrect date input (FromDate>ToDate)
                         JOptionPane.showMessageDialog(null, "Λάθος εισαγωγή ημερομηνιών. ", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
                     }
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(null, "Πρόβλημα κλήσης URL. Προσπαθήστε ξανά.", "Σφάλμα", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
-            //Αν έχουν απομείνει μέρες που δεν αντλήσαμε δεδομένα υπαναυπολογισμός ημερομηνιών και επανάκληση url
+            //If there are days left when we didn't pull data recalculate dates and callback url
             if (duration > 0 && duration < 95) {
 
                 Date dateTo = Date.from(toDate.atStartOfDay(defaultZoneId).toInstant());
@@ -643,31 +635,31 @@ public class ShowStatistics extends javax.swing.JFrame {
                 String df = simpleDateFormat.format(dateFrom);
                 String dt = simpleDateFormat.format(dateTo);
 
-                //Ενημερώνουμε τη μπάρα εργασίας πόσο πρέπει να γεμίσει
+                //Inform the progress taskbar how much it should fill
                 value++;
                 showStatisticsProgressBar.setValue(value);
                 showStatisticsProgressBar.update(showStatisticsProgressBar.getGraphics());
-                //Διαδικασία για κλήση url
+                //Procedure to call url
 
-                //Περνάμε το url που θα καλέσουμε σε ενα string
+                //We pass the url to be called to a string
                 String urlToCall = "https://api.opap.gr/draws/v3.0/5104/draw-date/" + df + "/" + dt + "/?limit=180";
                 OkHttpClient client = new OkHttpClient();
 
                 Request request = new Request.Builder().url(urlToCall).build();
 
-                //Καλούμε το κατάλληλο url 
+                //Call the proper url
                 try (Response response = client.newCall(request).execute()) {
                     if (response.isSuccessful() && response.body() != null) {
                         String responseString = response.body().string();
 
-                        //Διαδικασία άντλησης των δεδομένων του Json
-                        //Δημιουργούμε ένα αντικείμενο GsonBuilder
+                        //Process to extract the Json data
+                        //Create a GsonBuilder object
                         GsonBuilder builder = new GsonBuilder();
                         Gson gson = builder.create();
-                        //Δημιουργούμε ένα JsonObject που περιέχει το Json που αντλήσαμε
+                        //Create a JsonObject that contains the Json we extracted
                         JsonObject jsonObj = gson.fromJson(responseString, JsonObject.class);
 
-                        //Δημιουργούμε ενα JsonArray που περιέχει τα Objects 
+                        //Create a JsonArray containing the Objects
                         JsonArray content = jsonObj.getAsJsonArray("content");
 
                         for (JsonElement draw : content) {
@@ -682,7 +674,7 @@ public class ShowStatistics extends javax.swing.JFrame {
                             drawObj1.setWinningNumber5(winningNumbers.get(4).getAsInt());
                             drawObj1.setBonusNumber(bonusNumbers.get(0).getAsInt());
                             draws.add(drawObj1);
-                            //Ενημερώνουμε τη μπαρα εργασίας πόσο πρέπει να γεμίσει
+                            //Inform the progress taskbar how much it should fill
                             value++;
                             showStatisticsProgressBar.setValue(value);
                             showStatisticsProgressBar.update(showStatisticsProgressBar.getGraphics());
@@ -690,14 +682,14 @@ public class ShowStatistics extends javax.swing.JFrame {
                         }
 
                     } else {
-                        //Ενημερωτικό μήνυμα σε περίπτωση λανθασμένης εισαγωγής ημερομηνιών (FromDate>ToDate)
+                        //Informative message in case of incorrect date input (FromDate>ToDate)
                         JOptionPane.showMessageDialog(null, "Λάθος εισαγωγή ημερομηνιών. ", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
                     }
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(null, "Πρόβλημα κλήσης URL. Προσπαθήστε ξανά.", "Σφάλμα", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
-            //Φτιάχνουμε βοηθητικές λίστες για να αντλήσουμε από το json δεδομένα
+            //Create helper lists to pull data from the json
             int[] occurrences = new int[45];
             int[] delays = new int[45];
             int[] numbersList = new int[45];
@@ -710,21 +702,21 @@ public class ShowStatistics extends javax.swing.JFrame {
                 delays[i] = 0;
             }
 
-            //Παραμετροποιούμε τον πίνακα που θα εμφανίζει τα στατιστικά δεδομένα των αριθμών 1-45
+            //Parameterize the table that will display the statistical data of numbers 1-45
             DefaultTableModel model = (DefaultTableModel) numbersTable.getModel();
             model.setRowCount(0);
             String[] columnNames = {"Αριθμός", "Εμφανίσεις", "Καθυστερήσεις"};
             model.setColumnIdentifiers(columnNames);
-            //Παραμετροποιούμε τον πίνακα που θα εμφανίζει τα στατιστικά δεδομένα των αριθμών bonus
+            //We configure the table that will display the statistical data of the bonus numbers
             DefaultTableModel model1 = (DefaultTableModel) bonusTable.getModel();
             model1.setRowCount(0);
             model1.setColumnIdentifiers(columnNames);
 
-            //Ταξινόμηση draws σύμφωνα με κωδικό κλήρωσης
+            //Sort draws by draw code
             draws.sort(comparingInt((type) -> type.getId()));
-            //Yπλογίζουμε τις εμφανίσεις των αριθμών 1-45 και τις περνάμε στον πίνακα occurrences
+            //We calculate the occurrences of the numbers 1-45 and pass them to the occurrences table
             for (Draws draw : draws) {
-                //Η μπάρα εργασίας ξεκινάει πάλι από το 0 αφου ξεκινάει νέα διεργασία
+                //The taskbar restarts from 0 since a new process is started
                 value = 0;
 
                 occurrences[draw.getWinningNumber1() - 1]++;
@@ -733,7 +725,7 @@ public class ShowStatistics extends javax.swing.JFrame {
                 occurrences[draw.getWinningNumber4() - 1]++;
                 occurrences[draw.getWinningNumber5() - 1]++;
 
-                //Υπολογίζουμε τις καθυστερήσεις των αριθμών 1-45 και τις περνάμε στον πίνακα delays
+                //Calculate the delays of numbers 1-45 and pass them to the delays array
                 for (int i = 0; i < 45; i++) {
                     delays[i]++;
                 }
@@ -742,27 +734,27 @@ public class ShowStatistics extends javax.swing.JFrame {
                 delays[draw.getWinningNumber3() - 1] = 0;
                 delays[draw.getWinningNumber4() - 1] = 0;
                 delays[draw.getWinningNumber5() - 1] = 0;
-                //Ενημερώνουμε τη μπάρα εργασίας
+                //Update the taskbar
                 value++;
                 showStatisticsProgressBar.setValue(value);
                 showStatisticsProgressBar.update(showStatisticsProgressBar.getGraphics());
             }
 
-            //Πρσθήκη δεδομένων στον πίνακα που εμφανίζεται στο παράθυρο σχετικά με τα στατιστικά δεδομένα των αριθμών 1-45
+            //Add data to the table displayed in the window about the statistical data of numbers 1-45
             for (int i = 0; i < 45; i++) {
                 Object[] rowValues = {numbersList[i], occurrences[i], delays[i]};
                 model.addRow(rowValues);
-                //Ενημερώνουμε τη μπάρα εργασίας
+                //Update the progress taskbar
                 value++;
                 showStatisticsProgressBar.setValue(value);
                 showStatisticsProgressBar.update(showStatisticsProgressBar.getGraphics());
             }
 
-            //Μηδενισμός των τιμών στους πίνακες occurrences και delays
+            //Reset the values in the occurrences and delays arrays
             for (int i = 0; i < 45; i++) {
                 occurrences[i] = 0;
                 delays[i] = 0;
-                //Ενημερώνουμε τη μπάρα εργασίας
+                //Update the progress taskbar
                 value++;
                 showStatisticsProgressBar.setValue(value);
                 showStatisticsProgressBar.update(showStatisticsProgressBar.getGraphics());
@@ -774,16 +766,16 @@ public class ShowStatistics extends javax.swing.JFrame {
                     delays[i]++;
                 }
                 delays[draw.getBonusNumber() - 1] = 0;
-                //Ενημερώνουμε τη μπάρα εργασίας
+                ///Update the progress taskbar
                 value++;
                 showStatisticsProgressBar.setValue(value);
                 showStatisticsProgressBar.update(showStatisticsProgressBar.getGraphics());
             }
-            //Πρσθήκη δεδομένων στον πίνακα που εμφανίζεται στο παράθυρο σχετικά με τα στατιστικά δεδομένα των bonus αριθμών
+            //Add data to the table displayed in the window about the statistical data of the bonus numbers
             for (int i = 0; i < 20; i++) {
                 Object[] rowValues = {numbersList[i], occurrences[i], delays[i]};
                 model1.addRow(rowValues);
-                //Εημερώνουμε τη μπάρα εργασίας
+                //Update the progress taskbar
                 value++;
                 showStatisticsProgressBar.setValue(value);
                 showStatisticsProgressBar.update(showStatisticsProgressBar.getGraphics());
@@ -791,7 +783,7 @@ public class ShowStatistics extends javax.swing.JFrame {
 
             numbersPane.getViewport().add(numbersTable);
             bonusPane.getViewport().add(bonusTable);
-            //Βάζουμε τις ημερομηνίες για τις οποίες ισχύουν τα στατιστικά δεδομένα στο label του αντίστοιχου πίνακα
+            //We put the dates for which the statistical data are valid in the label of the corresponding table
             apiOrBdLabel.setForeground(new java.awt.Color(222, 222, 222));
             apiOrBdLabel.setText("[API]");
             statisticsDatesLabel1.setForeground(new java.awt.Color(222, 222, 222));
@@ -799,7 +791,7 @@ public class ShowStatistics extends javax.swing.JFrame {
             statisticsDatesLabel1.setText("Στατιστικά δεδομένα κληρώσεων από");
             statisticsDatesLabel2.setText(FromDateComboBox.getSelectedItem() + " έως " + ToDateComboBox.getSelectedItem() + ".");
 
-        } //Αν ο χρήστης πατήσει αναζήτηση χωρίς να έχει επιλέξει εύρος ημερομηνιών τότε του εμφανίζει ενημερωτικό μήνυμα  
+        } //If the user clicks search without having selected a date range then it displays an informational message
         else if (((FromDateComboBox.getSelectedItem() == null) || (ToDateComboBox.getSelectedItem() == null))) {
             //Ενημερωτικό μήνυμα
             JOptionPane.showMessageDialog(null, "Πρέπει να εισάγετε ημερομηνίες. ", "Λάθος Επιλογή", JOptionPane.INFORMATION_MESSAGE);
@@ -807,18 +799,18 @@ public class ShowStatistics extends javax.swing.JFrame {
     }//GEN-LAST:event_showStatisticsButtonActionPerformed
 
     private void showStatisticsDBButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showStatisticsDBButtonActionPerformed
-        //Αποτέλεσμα αναζήτησης στατιστικών δεδομένων σε βάση δεδομένων με εύρος ημερομηνιών
+       //Result of looking up statistical data in database with date range
 
         showStatisticsProgressBar.setValue(0);
         showStatisticsProgressBar.setMinimum(0);
-        //Αν ο χρήστης έχει εισάγει ημερομηνίες
+        //If the user has entered dates
         if (((FromDateComboBox.getSelectedItem() != null) && (ToDateComboBox.getSelectedItem() != null))) {
-            //Έλεγχος αν η ημερομηνία είναι έγκυρη (πχ 2022-02-30 είναι άκυρη ημερομηνία)
+            //Check if the date is valid (eg 2022-02-30 is an invalid date)
             try {
                 LocalDate fromDate = LocalDate.parse(FromDateComboBox.getSelectedItem().toString());
                 LocalDate toDate = LocalDate.parse(ToDateComboBox.getSelectedItem().toString());
 
-                //Έλεγχος αν οι εισαγώμενες ημερομηνίες είναι μέχρι σήμερα
+                //Check if the entered dates are up to date
                 if (LocalDate.now().isBefore(fromDate) || LocalDate.now().isBefore(toDate)) {
                     JOptionPane.showMessageDialog(null, "Έχετε εισάγει ημερομηνίες που ξεπερνούν τη σημερινή ημέρα. Προσπαθήστε ξανά.", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
                     return;
@@ -829,42 +821,40 @@ public class ShowStatistics extends javax.swing.JFrame {
                 return;
             }
 
-            //Υπολογίζουμε τη διάρκεια ημερών που έχει βάλει ο χρήστης
+            //Calculate the length of days entered by the user
             LocalDate fromDate = LocalDate.parse(FromDateComboBox.getSelectedItem().toString());
             LocalDate toDate = LocalDate.parse(ToDateComboBox.getSelectedItem().toString());
             long fromDateDays = fromDate.toEpochDay();
             long toDateDays = toDate.toEpochDay();
             long duration = toDateDays - fromDateDays + 1;
 
-            //Ενημερωτικό μήνυμα προς το χρήστη σε περίπτωση που η fromDate ημερομηνία είναι μεγαλύτερη από την toDate ημερομηνία
+            //Informative message to the user in case the fromDate date is greater than the toDate date
             if (duration < 0) {
                 JOptionPane.showMessageDialog(null, "Λάθος εισαγωγή εύρους ημερομηνιών. Προσπαθήστε ξανά. ", "Λάθος Εισαγωγή", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
 
-            //Δημιουργία του EntityManagerFactory
             EntityManagerFactory emf = Persistence.createEntityManagerFactory("JokerGameStatsPU");
-            //Δημιουργία του EntityManager
             EntityManager em = emf.createEntityManager();
 
-            //Έναρξη προσπάθειας δοσοληψίας με τη βάση δεδομένων
+            //Begin attempting to transact with the database
             try {
                 //Έναρξη δοσοληψίας
                 em.getTransaction().begin();
 
-                //Δημιουργία κατάλληλης ερώτησης προς βάση δεδομένων για να αντλήσουμε δεδομένα σε εύρος ημερομηνιών
+                //Create proper query to retrieve data in date range
                 Query findDraws = em.createNativeQuery("SELECT * FROM DRAW WHERE DATE BETWEEN '" + FromDateComboBox.getSelectedItem().toString() + "' AND '"
                         + ToDateComboBox.getSelectedItem().toString() + "'", Draw.class);
-                //Παίρνουμε τα αποτελέσματα της βάσης σε μία λίστα
+                //Get the database results into a list
                 List<Draw> drawsPj = findDraws.getResultList();
 
-                //Αν η λίστα αποτελεσμάτων απο τη βάση δεδομένων δεν είναι άδεια εκκίνηση διαδιακασίας υπολογισμού στατιστικών
+                //If result list from database is not empty start statistics calculation process
                 if (!drawsPj.isEmpty()) {
-                    //Δημιουργία πινάκων για να υπολογίσουμε εμφανίσεις και καθυστερήσεις αριθμών
+                    //Create arrays to calculate number appearances and delays
                     int[] occurrences = new int[45];
                     int[] delays = new int[45];
                     int[] numbersList = new int[45];
-                    //Μηδενισμός τιμών στους πίνακες
+                    //Reset values to arrays
                     for (int i = 0; i < 45; i++) {
                         numbersList[i] = i + 1;
                     }
@@ -873,27 +863,27 @@ public class ShowStatistics extends javax.swing.JFrame {
                         delays[i] = 0;
                     }
 
-                    //Παραμετροποιούμε τον πίνακα που θα εμφανίζει τα στατιστικά δεδομένα των αριθμών 1-45
+                    //Parameterize the table that will display the statistical data of numbers 1-45
                     DefaultTableModel model = (DefaultTableModel) numbersTable.getModel();
                     model.setRowCount(0);
                     String[] columnNames = {"Αριθμός", "Εμφανίσεις", "Καθυστερήσεις"};
                     model.setColumnIdentifiers(columnNames);
-                    //Παραμετροποιούμε τον πίνακα που θα εμφανίζει τα στατιστικά δεδομένα των αριθμών bonus
+                    //We configure the table that will display the statistical data of the bonus numbers
                     DefaultTableModel model1 = (DefaultTableModel) bonusTable.getModel();
                     model1.setRowCount(0);
                     model1.setColumnIdentifiers(columnNames);
 
-                    //Ταξινόμηση draws σύμφωνα με κωδικό κλήρωσης ώστε να υπολογιστούν σωστά οι καθυστερήσεις
+                    //Sort draws by draw code to calculate delays correctly
                     drawsPj.sort(comparingInt((type) -> type.getId()));
                     showStatisticsProgressBar.setMaximum(drawsPj.size() * 45);
-                    //Yπολογίζουμε τις εμφανίσεις των αριθμών 1-45 και τις περνάμε στον πίνακα occurrences
+                    //Calculate the occurrences of the numbers 1-45 and pass them to the occurrences table
                     for (Draw draw : drawsPj) {
                         occurrences[draw.getWinningnumber1() - 1]++;
                         occurrences[draw.getWinningnumber2() - 1]++;
                         occurrences[draw.getWinningnumber3() - 1]++;
                         occurrences[draw.getWinningnumber4() - 1]++;
                         occurrences[draw.getWinningnumber5() - 1]++;
-                        //Υπολογίζουμε τις καθυστερήσεις των αριθμών 1-45 και τις περνάμε στον πίνακα delays
+                        //Calculate the delays of numbers 1-45 and pass them to the delays array
                         for (int j = 0; j < 45; j++) {
                             delays[j]++;
                             int value = showStatisticsProgressBar.getValue() + 1;
@@ -907,27 +897,27 @@ public class ShowStatistics extends javax.swing.JFrame {
                         delays[draw.getWinningnumber5() - 1] = 0;
                     }
 
-                    //Πρσθήκη δεδομένων στον πίνακα που εμφανίζεται στο παράθυρο σχετικά με τα στατιστικά δεδομένα των αριθμών 1-45
+                    //Add data to the table displayed in the window about the statistical data of numbers 1-45
                     for (int i = 0; i < 45; i++) {
                         Object[] rowValues = {numbersList[i], occurrences[i], delays[i]};
                         model.addRow(rowValues);
                     }
 
-                    //Μηδενισμός των τιμών στους πίνακες occurrences και delays
+                    //Reset the values in the occurrences and delays arrays
                     for (int i = 0; i < 45; i++) {
                         occurrences[i] = 0;
                         delays[i] = 0;
                     }
-                    //Yπολογίζουμε τις εμφανίσεις των αριθμών τζόκερ 1-20 και τις περνάμε στον πίνακα ocurrences
+                    //Count the occurrences of wildcard numbers 1-20 and pass them to the occurrences array
                     for (Draw draw : drawsPj) {
                         occurrences[draw.getBonus() - 1]++;
-                        //Yπολογίζουμε τις καθυστερήσεις των αριθμών τζόκερ 1-20 και τις περνάμε στον πίνακα delays
+                        //Compute the delays of wildcard numbers 1-20 and pass them to the delays array
                         for (int i = 0; i < 20; i++) {
                             delays[i]++;
                         }
                         delays[draw.getBonus() - 1] = 0;
                     }
-                    //Πρσθήκη δεδομένων στον πίνακα που εμφανίζεται στο παράθυρο σχετικά με τα στατιστικά δεδομένα των bonus αριθμών
+                    //Add data to the table displayed in the window about the statistical data of the bonus numbers
                     for (int i = 0; i < 20; i++) {
                         Object[] rowValues = {numbersList[i], occurrences[i], delays[i]};
                         model1.addRow(rowValues);
@@ -936,7 +926,7 @@ public class ShowStatistics extends javax.swing.JFrame {
                     numbersPane.getViewport().add(numbersTable);
                     bonusPane.getViewport().add(bonusTable);
 
-                    //Βάζουμε τις ημερομηνίες για τις οποίες ισχύουν τα στατιστικά δεδομένα στο label του αντίστοιχου πίνακα
+                    //We put the dates for which the statistical data are valid in the label of the corresponding table
                     apiOrBdLabel.setForeground(new java.awt.Color(222, 222, 222));
                     apiOrBdLabel.setText("[ΒΑΣΗ ΔΕΔΟΜΕΝΩΝ]");
                     statisticsDatesLabel1.setForeground(new java.awt.Color(222, 222, 222));
@@ -947,21 +937,21 @@ public class ShowStatistics extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null, "Δεν υπάρχουν αποθηκευμένα δεδομένα για αυτές τις ημερομηνίες.\nΔοκιμάστε ξανά.", "Eνημέρωση", JOptionPane.INFORMATION_MESSAGE);
                 }
 
-                //Τερματισμός δοσοληψίας
+                //End transaction
                 em.getTransaction().commit();
             } catch (Exception e) {
-                //Ενημερωτικό μήνυμα
+                //Informative message
                 JOptionPane.showMessageDialog(null, "Η διαδικασία δεν ήταν επιτυχής. Προσπαθήστε ξανά. ", "Σφάλμα", JOptionPane.INFORMATION_MESSAGE);
                 e.printStackTrace();
             }
 
-            //Καταστροφή του EntityManagerFactory και του EntityManager
+            //Destroy EntityManagerFactory and EntityManager
             em.close();
             emf.close();
 
-        } //Αν ο χρήστης πατήσει αναζήτηση χωρίς να έχει επιλέξει εύρος ημερομηνιών τότε του εμφανίζει ενημερωτικό μήνυμα  
+        } //If the user clicks search without having selected a date range then it displays an informational message
         else if (((FromDateComboBox.getSelectedItem() == null) || (ToDateComboBox.getSelectedItem() == null))) {
-            //Ενημερωτικό μήνυμα
+            //Informative message
             JOptionPane.showMessageDialog(null, "Πρέπει να εισάγετε ημερομηνίες. ", "Λάθος Επιλογή", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_showStatisticsDBButtonActionPerformed
