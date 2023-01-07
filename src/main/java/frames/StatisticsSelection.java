@@ -34,32 +34,30 @@ public class StatisticsSelection extends JFrame {
      */
     public StatisticsSelection() {
         initComponents();
-        //Τίτλος παραθύρου
         setTitle("Επιλογή Στατιστικών Στοιχείων");
-        //Το παράθυρο κλείνει όταν ο χρήστης πατήσει x
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        //Όταν ανοίγει το παράθυρο που ο χρήστης επιλέγει ποια στατιστικά στοιχεία θέλει να παραχθούν ενημερώνονται στα combobox οι ημερομηνίες
-        //Μεταβλητές που αποθηκεύουν τις ημερομηνίες για 2000-01-01 έως και σήμερα
+        //When the window opens where the user selects which statistics he wants to be produced, the dates are updated in the combobox
+        //Variables that store the dates for 2000-01-01 through today
         LocalDate startDate = LocalDate.of(2000, 01, 01);
         LocalDate endDate = LocalDate.now();
         long numOfDays = ChronoUnit.DAYS.between(startDate, endDate);
-        //Για τα έτη 2000 έως 2022 φτιάξε λίστα με ημερομηνίες 
+        //For the years 2000 to 2022 make a list of dates
         List<LocalDate> listOfDates1 = Stream.iterate(startDate, date -> date.plusDays(1))
                 .limit(numOfDays + 1)
                 .collect(Collectors.toList());
 
-        //Πρόσθεσε στo ToDateCombobox ημερομηνίες
+        //Add dates to the ToDateCombobox
         for (int i = 0; i < listOfDates1.size(); i++) {
             ToDateComboBox.addItem(listOfDates1.get(i).toString());
         }
 
-        //Πρόσθεσε στo FromDateCombobox  ημερομηνίες
+        //Add dates to the FromDateCombobox
         for (int i = 0; i < listOfDates1.size(); i++) {
             FromDateComboBox.addItem(listOfDates1.get(i).toString());
         }
 
-        //Αρχική επιλογή comboboxes τίποτα
+        //Initial selection comboboxes NULL
         FromDateComboBox.setSelectedItem(null);
         ToDateComboBox.setSelectedItem(null);
     }
@@ -196,37 +194,35 @@ public class StatisticsSelection extends JFrame {
     }//GEN-LAST:event_ToDateComboBoxActionPerformed
 
     private void searchStatisticsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchStatisticsButtonActionPerformed
-        //Διαδικασία υπολογισμού στατιστικών δεδομένων και εμφάνιση τους σε διάγραμμα
+        //Process of calculating statistical data and displaying it in a chart
 
-        //Έναρξη διαδικασίας άντλησης δεδομένων από τη βάση δεδομένων 
-        //Δημιουργία του EntityManagerFactory
+        //Start process of fetching data from database
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("JokerGameStatsPU");
-        //Δημιουργία του EntityManager
         EntityManager em = emf.createEntityManager();
 
-        //Έναρξη προσπάθειας δοσοληψίας με τη βάση δεδομένων
+        //Begin attempting to transact with the database
         try {
-            //Έναρξη δοσοληψίας
+            //Start transaction
             em.getTransaction().begin();
 
-            //Δημιουργία κατάλληλων ερωτήσεων προς τη βάση δεδομένων για άντληση δεδομένων
+            //Create appropriate queries to the database to retrieve data
             Query findDraws = em.createNamedQuery("Draw.findAll", Draw.class);
             Query findPrizeCategories = em.createNamedQuery("Prizecategory.findAll", Prizecategory.class);
             List<Draw> drawsPj = findDraws.getResultList();
             List<Prizecategory> prizeCategoryPj = findPrizeCategories.getResultList();
 
             if (!drawsPj.isEmpty()) {
-                //Δημιουργία πινάκων για να υπολογίσουμε πόσες φορές εμφανίστηκε κάθε αριθμός
+                //Create arrays to count how many times each number appeared
                 int[] countNumbers = new int[45];
                 int[] countBonusNumbers = new int[20];
-                //Αρχικοποίηση τιμών στους πίνακες
+                //Initialize values in arrays
                 for (int i = 0; i < 45; i++) {
                     countNumbers[i] = 0;
                 }
                 for (int i = 0; i < 20; i++) {
                     countBonusNumbers[i] = 0;
                 }
-                //Υπολογισμός πόσες φορές εμφανίστηκε κάθε αριθμός και αντιστοίχηση στον κατάλληλο πίνακα
+                //Count how many times each number appeared and map to the appropriate array
                 for (Draw draw : drawsPj) {
                     countNumbers[draw.getWinningnumber1() - 1]++;
                     countNumbers[draw.getWinningnumber2() - 1]++;
@@ -236,29 +232,29 @@ public class StatisticsSelection extends JFrame {
                     countBonusNumbers[draw.getBonus() - 1]++;
                 }
 
-                //Δημιουργία πίνακα για να υπολογίσουμε το μέσο όρο κερδών ανά επιτυχία
+                //Create table to calculate average earnings per hit
                 double[] dividentAvg = new double[8];
-                //Αρχικοποίηση τιμών στον πίνακα dividentAvg
+                //Initialize values in dividendAvg array
                 for (int i = 0; i < 8; i++) {
                     dividentAvg[i] = 0.0;
                 }
 
-                //Περνάμε όλα τα κέρδη ανά επιτυχία στον πίνακα και τα αθροίζουμε ανά κατηγορία επιτυχίας
+                //We pass all the earnings per success into the array and sum them by success category
                 int count = 0;
                 for (Prizecategory prizeCategory : prizeCategoryPj) {
                     dividentAvg[prizeCategory.getPrizecategoryPK().getId() - 1] += prizeCategory.getDivident();
                     count++;
                 }
 
-                //Τερματισμός δοσοληψίας με βάση δεδομένων
+                //End transaction with database
                 em.getTransaction().commit();
 
-                //Φτιάχνουμε 3 λίστες τύπου ChartData για να αποθηκεύσουμε τα δεδομένα που θα δείξουμε στο γράφημα 
-                List<ChartData> dividentAvgChartData = new ArrayList<>(); //Μέσος όρος κερδών ανά κατηγορία
-                List<ChartData> maxNumberChartData = new ArrayList<>();//5 πιο συχνά εμφανιζόμενοι αριθμοί τζόκερ και οι εμφανίσεις τους
-                List<ChartData> maxBonusNumberChartData = new ArrayList<>();//5 πιο συχνά εμφανιζόμενοι αριθμοί και οι εμφανίσεις τους
+                //We create 3 lists of type ChartData to store the data we will show on the chart
+                List<ChartData> dividentAvgChartData = new ArrayList<>(); //Average earnings per category
+                List<ChartData> maxNumberChartData = new ArrayList<>();//5 most frequently occurring joker numbers and their occurrences
+                List<ChartData> maxBonusNumberChartData = new ArrayList<>();//5 most frequently occurring numbers and their occurrences
 
-                //Υπολογισμός 5 πιο συχνά εμφανιζόμενων αριθμών 1-45
+                //Calculate 5 most frequently occurring numbers 1-45
                 int max = 0;
                 int maxPos = 0;
                 for (int i = 0; i < 5; i++) {
@@ -276,7 +272,7 @@ public class StatisticsSelection extends JFrame {
                     max = 0;
                 }
 
-                //Υπολογισμός 5 πιο συχνά εμφανιζόμενων αριθμών τζόκερ
+                //Compute 5 most frequently occurring joker numbers
                 max = 0;
                 maxPos = 0;
                 for (int i = 0; i < 5; i++) {
@@ -294,8 +290,8 @@ public class StatisticsSelection extends JFrame {
                     max = 0;
                 }
 
-                //Υπολογισμός μέσου όρου κερδών ανά κατηγορία
-                count = count / 8;//Yπολογισμός πλήθους κληρώσεων
+                //Calculate average earnings per category
+                count = count / 8;//Calculation of number of draws
 
                 for (int i = 0; i < 8; i++) {
                     ChartData dividentAvgData = new ChartData();
@@ -305,7 +301,7 @@ public class StatisticsSelection extends JFrame {
 
                 }
 
-                //Ανάλογα με το ποια στατιστικά επέλεξε ο χρήστης εμφανίζεται και το αντίστοιχο διάγραμμα
+                //Depending on which statistics the user has chosen, the corresponding diagram is also displayed
                 if (numbersRadioButton.isSelected()) {
                     StatisticsGraphicForm form = new StatisticsGraphicForm();
                     form.plotChart("5 πιο συχνά εμφανιζόμενοι αριθμοί", "Αριθμός", "Εμφανίσεις", maxNumberChartData);
@@ -317,58 +313,52 @@ public class StatisticsSelection extends JFrame {
                     form.plotAvgChart("Μ.Ο. κερδών ανά κατηγορία", "Κατηγορία επιτυχίας", "Μέσος όρος κερδών", dividentAvgChartData);
                 }
             } else {
-                //Τερματισμός δοσοληψίας
                 em.getTransaction().commit();
-                //Ενημερωτικό μήνυμα
                 JOptionPane.showMessageDialog(null, "Η βάση δεδομένων είναι άδεια. ", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
             }
         } catch (Exception e) {
-            //Ενημερωτικό μήνυμα
             JOptionPane.showMessageDialog(null, "Η διαδικασία δεν ήταν επιτυχής. Προσπαθήστε ξανά. ", "Σφάλμα", JOptionPane.INFORMATION_MESSAGE);
             e.printStackTrace();
         }
 
-        //Καταστροφή του EntityManagerFactory και του EntityManager
         em.close();
         emf.close();
     }//GEN-LAST:event_searchStatisticsButtonActionPerformed
 
     private void searchStatisticsByDateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchStatisticsByDateButtonActionPerformed
-        //Διαδικασία άντλησης δεδομένων από βάση δεδομένων βάση εύρους ημερομηνιών
+        //Process to fetch data from date range database
 
-        //Aν ο χρήστης δεν εισάγει ημερομηνίες και πατήσει προβολή δεδομένων, εμφάνιση ενημερωτικού μηνύματος
+        //If the user does not enter dates and clicks view data, display an informational message
         if ((FromDateComboBox.getSelectedItem() == null) || (ToDateComboBox.getSelectedItem() == null)) {
-            //Ενημερωτικό μήνυμα
+            //Informative message
             JOptionPane.showMessageDialog(null, "Πρέπει να εισάγετε εύρος ημερομηνιών.", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
         } else {
-            //Δημιουργία του EntityManagerFactory
             EntityManagerFactory emf = Persistence.createEntityManagerFactory("JokerGameStatsPU");
-            //Δημιουργία του EntityManager
             EntityManager em = emf.createEntityManager();
 
-            //Έναρξη προσπάθειας δοσοληψίας με τη βάση δεδομένων
+            //Begin attempting to transact with the database
             try {
-                //Έναρξη δοσοληψίας
+                //ΈStart the transaction
                 em.getTransaction().begin();
 
-                //Δημιουργία κατάλληλης ερώτησης προς βάση δεδομένων για να αντλήσουμε δεδομένα σε εύρος ημερομηνιών
+                //Create appropriate database query to retrieve data in date range
                 Query findDraws = em.createNativeQuery("SELECT * FROM DRAW WHERE DATE BETWEEN '" + FromDateComboBox.getSelectedItem().toString() + "' AND '"
                         + ToDateComboBox.getSelectedItem().toString() + "'", Draw.class);
-                //Παίρνουμε τα αποτελέσματα της βάσης σε μία λίστα
+                //Get the database results into a list
                 List<Draw> drawsPj = findDraws.getResultList();
-                //Aν η βάση δεδομένων περιέχει δεδομένα για τις ζητούμενες ημερομηνίες
+                //If the database contains data for the requested dates
                 if (!drawsPj.isEmpty()) {
-                    //Δημιουργία πινάκων για να υπολογίσουμε πόσες φορές εμφανίστηκε κάθε αριθμός
+                    //Create arrays to count how many times each number appeared
                     int[] countNumbers = new int[45];
                     int[] countBonusNumbers = new int[20];
-                    //Αρχικοποίηση τιμών στους πίνακες
+                    //Initialize values in arrays
                     for (int i = 0; i < 45; i++) {
                         countNumbers[i] = 0;
                     }
                     for (int i = 0; i < 20; i++) {
                         countBonusNumbers[i] = 0;
                     }
-                    //Υπολογισμός πόσες φορές εμφανίστηκε κάθε αριθμός και αντιστοίχηση στον κατάλληλο πίνακα
+                    //Count how many times each number appeared and map to the appropriate array
                     for (Draw draw : drawsPj) {
                         countNumbers[draw.getWinningnumber1() - 1]++;
                         countNumbers[draw.getWinningnumber2() - 1]++;
@@ -378,14 +368,14 @@ public class StatisticsSelection extends JFrame {
                         countBonusNumbers[draw.getBonus() - 1]++;
                     }
 
-                    //Δημιουργία πίνακα για να υπολογίσουμε το μέσο όρο κερδών ανά επιτυχία
+                    //Create table to calculate average earnings per hit
                     double[] dividentAvg = new double[8];
-                    //Αρχικοποίηση τιμών στον πίνακα dividentAvg
+                    //Initialize values in dividendAvg array
                     for (int i = 0; i < 8; i++) {
                         dividentAvg[i] = 0.0;
                     }
 
-                    //Περνάμε όλα τα κέρδη ανά επιτυχία στον πίνακα και τα αθροίζουμε ανά κατηγορία επιτυχίας
+                    //We pass all the earnings per success into the array and sum them by success category
                     int count = 0;
 
                     for (Draw draw : drawsPj) {
@@ -396,15 +386,14 @@ public class StatisticsSelection extends JFrame {
                         }
                     }
 
-                    //Τερματισμός δοσοληψίας
                     em.getTransaction().commit();
 
-                    //Φτιάχνουμε 3 λίστες τύπου ChartData για να αποθηκεύσουμε τα δεδομένα που θα δείξουμε στο γράφημα 
-                    List<ChartData> dividentAvgChartData = new ArrayList<>(); //Μέσος όρος κερδών ανά κατηγορία
-                    List<ChartData> maxNumberChartData = new ArrayList<>();//5 πιο συχνά εμφανιζόμενοι αριθμοί τζόκερ και οι εμφανίσεις τους
-                    List<ChartData> maxBonusNumberChartData = new ArrayList<>();//5 πιο συχνά εμφανιζόμενοι αριθμοί και οι εμφανίσεις τους
+                    //We create 3 lists of type ChartData to store the data we will show on the chart
+                    List<ChartData> dividentAvgChartData = new ArrayList<>(); //Average earnings per category
+                    List<ChartData> maxNumberChartData = new ArrayList<>();//5 most frequently occurring joker numbers and their occurrences
+                    List<ChartData> maxBonusNumberChartData = new ArrayList<>();//5 most frequently occurring numbers and their occurrences
 
-                    //Υπολογισμός 5 πιο συχνά εμφανιζόμενων αριθμών 1-45 και καταχώρηση σε κατάλληλη λίστα τύπου ChartData
+                    //Calculate 5 most frequently occurring numbers 1-45 and insert into appropriate list of type ChartData
                     int max = 0;
                     int maxPos = 0;
                     for (int i = 0; i < 5; i++) {
@@ -422,7 +411,7 @@ public class StatisticsSelection extends JFrame {
                         max = 0;
                     }
 
-                    //Υπολογισμός 5 πιο συχνά εμφανιζόμενων αριθμών τζόκερ και καταχώρηση σε κατάλληλη λίστα τύπου ChartData
+                    //Calculate 5 most frequently occurring wildcard numbers and write to appropriate list of type ChartData
                     max = 0;
                     maxPos = 0;
                     for (int i = 0; i < 5; i++) {
@@ -440,8 +429,8 @@ public class StatisticsSelection extends JFrame {
                         max = 0;
                     }
 
-                    //Υπολογισμός μέσου όρου κερδών ανά κατηγορία
-                    count = count / 8; //Υπολογισμός πλήθους κληρώσεων
+                    //Calculate average earnings per category
+                    count = count / 8; //Calculate number of draws
                     for (int i = 0; i < 8; i++) {
                         ChartData dividentAvgData = new ChartData();
                         dividentAvgData.x = i;
@@ -450,7 +439,7 @@ public class StatisticsSelection extends JFrame {
 
                     }
 
-                    //Ανάλογα με το ποια στατιστικά επέλεξε ο χρήστης εμφανίζεται και το αντίστοιχο διάγραμμα
+                    //Depending on which statistics the user has chosen, the corresponding diagram is also displayed
                     if (numbersRadioButton.isSelected()) {
                         StatisticsGraphicForm form = new StatisticsGraphicForm();
                         form.plotChart("5 πιο συχνά εμφανιζόμενοι αριθμοί", "Αριθμός", "Εμφανίσεις", maxNumberChartData);
@@ -461,38 +450,37 @@ public class StatisticsSelection extends JFrame {
                         StatisticsGraphicForm form = new StatisticsGraphicForm();
                         form.plotAvgChart("Μ.Ο. κερδών ανά κατηγορία", "Κατηγορία επιτυχίας", "Μέσος όρος κερδών", dividentAvgChartData);
                     }
-                    //Αν δεν υπάρχουν αποθηκευμένα δεδομένα για το ζητούμενο εύρος ημερομηνιών εμφάνιση ενημερωτικού μηνύματος
+                    //If there is no data stored for the requested date range display an informational message
                 } else {
-                    //Ενημερωτικό μήνυμα
+                    //Informative message
                     JOptionPane.showMessageDialog(null, "Δεν υπάρχουν αποθηκευμένα δεδομένα για αυτές τις ημερομηνίες. ", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
                 }
             } catch (Exception e) {
-                //Ενημερωτικό μήνυμα
+                //Informative message
                 JOptionPane.showMessageDialog(null, "Η σύνδεση με τη βάση δεδομένων δεν ήταν επιτυχής. Προσπαθήστε ξανά. ", "Σφάλμα", JOptionPane.INFORMATION_MESSAGE);
             }
 
-            //Καταστροφή του EntityManagerFactory και του EntityManager
             em.close();
             emf.close();
         }
     }//GEN-LAST:event_searchStatisticsByDateButtonActionPerformed
 
     private void numbersRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numbersRadioButtonActionPerformed
-        //Ο χρήστης μπορεί να επιλέξει μόνο μια περίπτωση να προβληθεί σε γράφημα
+        //User can select only one case to be displayed in graphic form
         bonusRadioButton.setSelected(false);
         averageDividentRadioButton.setSelected(false);
         numbersRadioButton.setSelected(true);
     }//GEN-LAST:event_numbersRadioButtonActionPerformed
 
     private void bonusRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bonusRadioButtonActionPerformed
-        //Ο χρήστης μπορεί να επιλέξει μόνο μια περίπτωση να προβληθεί σε γράφημα
+        //User can select only one case to be displayed in graphic form
         bonusRadioButton.setSelected(true);
         averageDividentRadioButton.setSelected(false);
         numbersRadioButton.setSelected(false);
     }//GEN-LAST:event_bonusRadioButtonActionPerformed
 
     private void averageDividentRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_averageDividentRadioButtonActionPerformed
-        //Ο χρήστης μπορεί να επιλέξει μόνο μια περίπτωση να προβληθεί σε γράφημα
+        //User can select only one case to be displayed in graphic form
         bonusRadioButton.setSelected(false);
         averageDividentRadioButton.setSelected(true);
         numbersRadioButton.setSelected(false);

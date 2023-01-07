@@ -106,7 +106,7 @@ public class StatisticsGraphicForm extends javax.swing.JFrame {
         });
     }
 
-    //Μέθοδος δημιουργίας γραφήματος για εμφανίσεις αριθμών και τζόκερ αριθμών
+    //Graph creation method for number displays and number wildcards
     public void plotChart(String chartTitle, String xTitle, String yTitle, List<ChartData> data) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
@@ -124,7 +124,7 @@ public class StatisticsGraphicForm extends javax.swing.JFrame {
         frame.setVisible(true);
         frame.setSize(500, 500);
 
-        //Προσθήκη σημείωσης στο γράφημα
+        //Add note to chart
         TextTitle chartInfo = new TextTitle("Δεξί κλικ πάνω στο γράφημα για εμφάνιση ρυθμίσεων.");
         barChart.addSubtitle(chartInfo);
         chartInfo.setPosition(RectangleEdge.BOTTOM);
@@ -132,7 +132,7 @@ public class StatisticsGraphicForm extends javax.swing.JFrame {
         chartInfo.setTextAlignment(HorizontalAlignment.CENTER);
     }
 
-    //Μέθοδος δημιουργίας γραφήματος για μέσο όρο κερδών ανά κατηγορία
+    //Method to create graph for average earnings per category
     public void plotAvgChart(String chartTitle, String xTitle, String yTitle, List<ChartData> data) {
 
         final String[] x = {"5+1", "5", "4+1", "4", "3+1", "3", "2+1", "1+1"};
@@ -154,7 +154,7 @@ public class StatisticsGraphicForm extends javax.swing.JFrame {
         frame.setVisible(true);
         frame.setSize(500, 500);
 
-        //Προσθήκη σημείωσης στο γράφημα
+        //Add note to chart
         TextTitle chartInfo = new TextTitle("Πατήστε και σύρετε με το ποντίκι φτιάχνοντας ένα ορθογώνιο με κατεύθυνση προς τα κάτω, για να κάνετε zoom στην επιθυμητή περιοχή.");
         barChart.addSubtitle(chartInfo);
         chartInfo.setPosition(RectangleEdge.BOTTOM);
