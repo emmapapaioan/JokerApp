@@ -13,5 +13,6 @@
 /out/*
 derby.log
 derby.properties
+.gitattributes
 /db
 src/test
