@@ -46,56 +46,52 @@ public class ShowDataPerMonth extends javax.swing.JFrame {
         });
     }
 
-    //Μέθοδος που μετατρέπει ακέραιο αριθμό μήνα σε string με το όνομα του μήνα
+    //Method that converts an integer month number to a string with the name of the month
     private String getMonth(int month) {
         String[] nameMonth = {"Ιανουάριος", "Φεβρουάριος", "Μάρτιος", "Απρίλιος",
             "Μάϊος", "Ιούνιος", "Ιούλιος", "Αύγουστος", "Σεπτέμβριος", "Οκτώβριος", "Νοέμβριος", "Δεκέμβριος"};
         return nameMonth[month - 1];
     }
 
-    //Μέθοδος που γεμίζει το ComboYearBox με τα αποθηκευμένα στη βάση δεδομένων έτη
+    //Method that fills the ComboYearBox with the years stored in the database
     private void comboYears() {
-        //Δημιουργία του EntityManagerFactory.
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("JokerGameStatsPU");
-        //Δημιουργία του EntityManager.
         EntityManager em = emf.createEntityManager();
-        /*Από τη στήλη Date του πίνακα Draw επιλέγει το έτος(ομαδοποιεί τις ημερομηνίες με ίδιο έτος)
-          από την ημερομηνία και το αποθηκεύει σε πίνακα κατά αύξουσα σειρά.*/
+        //Selects the year from the Date column of the Draw table (groups dates with the same year)
+        //from the date and stores it in an array in ascending order
         Query selectDate = em.createNativeQuery("SELECT YEAR(DATE) AS YEARS FROM DRAW GROUP BY YEAR(DATE)");
         Object[] result = selectDate.getResultList().toArray();
-        //Διατρέχει τον πίνακα result και προσθέτει τα έτη στο jComboYearBox.
+        //Iterate through the result array and add the years to the jComboYearBox
         for (Object results : result) {
             comboYearBox.addItem(results.toString());
         }
-        //Καταστροφή του EntityManager και του EntityManagerFactory.
+        //Destroy EntityManager and EntityManagerFactory
         em.close();
         emf.close();
     }
 
-    //Μέθοδος που γεμίζει το ComboMonthBox με τους αποθηκευμένους στη βάση δεδομένων μήνες, για επιλεγμένο έτος
+    //Method that fills the ComboMonthBox with the months stored in the database, for a selected year
     private void comboMonths() {
-        //Δημιουργία του EntityManagerFactory.
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("JokerGameStatsPU");
-        //Δημιουργία του EntityManager.
         EntityManager em = emf.createEntityManager();
-        /*Από τη στήλη Date του πίνακα Draw επιλέγει τους μήνες
-          από την ημερομηνία και το αποθηκεύει σε πίνακα κατά αύξουσα σειρά.*/
+        //From the Date column of the Draw table selects the months
+        //from the date and stores it in an array in ascending order
         String year = comboYearBox.getSelectedItem().toString();
         Query selectDate = em.createNativeQuery("SELECT MONTH(DATE) AS MONTHS FROM DRAW WHERE YEAR(DATE)=" + year + " GROUP BY MONTH(DATE)");
         Object[] result = selectDate.getResultList().toArray();
         ArrayList<Integer> month = new ArrayList<>();
-        /*Διατρέχει τον πίνακα result και αποθηκεύονται τα στοιχεία του στο πίνακα month
-        με μετατροπή τους σε Integer.*/
+        //It goes through the table result and its elements are stored in the table month
+        //by converting them to Integer
         for (Object results : result) {
             month.add((Integer) results);
             invisibleComboBox.addItem(results.toString());
         }
-        /*Για κάθε αριθμό που περιέχει ο πίνακας month, αποθηκεύετε στο comboMonthBox το όνομα
-          του μήνα που αντιστοιχεί χρησιμοποιώντας τη μέθοδο getMonth.*/
+        //For each number contained in the month array, store in the comboMonthBox the name
+        //of the corresponding month using the getMonth method
         for (int i = 0; i < month.size(); i++) {
             comboMonthBox.addItem(this.getMonth(month.get(i)));
         }
-        //Καταστροφή του EntityManager και του EntityManagerFactory.
+        //Destroy EntityManager and EntityManagerFactory
         em.close();
         emf.close();
     }
@@ -192,26 +188,19 @@ public class ShowDataPerMonth extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void returnHomeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_returnHomeButtonActionPerformed
-        //Δημιούργησε ένα αντικείμενο τύπου Home
         Home home = new Home();
-        //Κάνε το αντικείμενο τύπου Home ορατό (Επιστροφή στην αρχική οθόνη)
         home.setVisible(true);
-        //Κάνε το παράθυρο Διαχείρισης δεδομένων όχι ορατό
         this.setVisible(false);
-        //Κλείσε το παράθυρο Διαχείρισης δεδομένων
         this.setDefaultCloseOperation(ShowDataPerMonth.EXIT_ON_CLOSE);
-        //Κατέστρεψε το παράθυρο διαχείρισης δεδομένων
         this.dispose();
     }//GEN-LAST:event_returnHomeButtonActionPerformed
 
     private void SearchMonthButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchMonthButtonActionPerformed
         if (comboYearBox.getSelectedIndex() != 0) {
-            //Δημιουργία του EntityManagerFactory.
             EntityManagerFactory emf = Persistence.createEntityManagerFactory("JokerGameStatsPU");
-            //Δημιουργία του EntityManager.
             EntityManager em = emf.createEntityManager();
 
-            //Βοηθητικές μεταβλητές για να υπολογίσουμε και να αποθηκεύσουμε τα συγκεντρωτικά δεδομένα
+            //Helper variables to calculate and store the aggregated data
             int countDraws;
             double countTotalDivident;
             int countJackpot;
@@ -220,66 +209,62 @@ public class ShowDataPerMonth extends javax.swing.JFrame {
             invisibleComboBox.setSelectedIndex(comboMonthBox.getSelectedIndex());
             String month1 = invisibleComboBox.getSelectedItem().toString();
 
-            //Δημιουργία κατάλληλης ερώτησης προς τη βάση δεδομένων
+            //Create an appropriate query to the database
             Query selectDate = em.createNativeQuery("SELECT * FROM DRAW WHERE YEAR(DATE) = " + year + " AND MONTH(DATE) = " + month1, Draw.class);
-            //Παίρνουμε τα αποτελέσματα της βάσης δεδομένων σε μια λίστα
+            //We get the database results into a list
             List<Draw> drawsPj = selectDate.getResultList();
 
-            //Υπολογίζουμε πλήθος κληρώσεων
+            //Calculate number of draws
             countDraws = drawsPj.size();
 
-            //Υπολογίζουμε πλήθος διανεμόμενων κερδών
+            //Calculate a number of distributed profits
             countTotalDivident = 0;
             double countDividentPerCategory;
 
-            //Για κάθε κλήρωση
+
             for (Draw draw : drawsPj) {
-                //Παίρνουμε σε λίστα τις 8 κατηγορίες κερδών ανά κλήρωση
+                //List the 8 win categories per draw
                 List<Prizecategory> prizeCategory = draw.getPrizecategoryList();
                 for (Prizecategory prizeCategories : prizeCategory) {
-                    //Υπολογίζουμε ανά κατηγορία επιτυχίας πόσα χρήματα διανεμήθηκαν
+                    //Calculate per success category how much money was distributed
                     countDividentPerCategory = prizeCategories.getDivident() * prizeCategories.getWinners();
-                    //Υπολογίζουμε συνολικά πόσα χρήματα διανεμήθηκαν 
+                    //We calculate the total amount of money distributed
                     countTotalDivident += countDividentPerCategory;
                 }
             }
 
-            //Υπολογίζουμε πλήθος ΤΖΑΚΠΟΤ
+            //Calculate jackpot count
             countJackpot = 0;
             for (Draw draw : drawsPj) {
-                //Παίρνουμε σε λίστα τις 8 κατηγορίες κερδών ανά κλήρωση
+                //List the 8 win categories per draw
                 List<Prizecategory> prizeCategory = draw.getPrizecategoryList();
-                //Αν στην κατηγορία 5+1 δεν υπήρχε κανένας νικητής τότε έγινε TZAK-ΠΟΤ
+                //If there was no winner in the 5+1 category then it became jackpot
                 if (prizeCategory.get(0).getWinners() == 0) {
                     countJackpot++;
                 }
-                //Αν στην κατηγορία 5 δεν υπήρχε κανένας νικητής τότε έγινε TZAK-ΠΟΤ
+                //If there was no winner in category 5 then it became jackpot
                 if (prizeCategory.get(1).getWinners() == 0) {
                     countJackpot++;
                 }
             }
 
-            //Καταστροφή του EntityManager και του EntityManagerFactory.
+            //Destroy EntityManager and EntityManagerFactory
             em.close();
             emf.close();
 
-            //Εμφάνιση double ως χρηματικό ποσό. 
             NumberFormat formatter = NumberFormat.getCurrencyInstance();
             String moneyString = formatter.format(countTotalDivident);
 
-            //Δημιουργούμε ένα jframe στο οποίο θα εμφανιστούν τα αποτελέσματα
+            //Create a jframe in which to display the results
             ShowDataPerMonthFinal showDataPerMonthFinal = new ShowDataPerMonthFinal();
-            //Κάνουμε το jframe showDataPerMonthFinal ορατό
             showDataPerMonthFinal.setVisible(true);
-            //Ενημερώνουμε τον πίνακα του showDataPerMonthFinal με τα συγκεντρωτικά δεδομένα
+            //Update the showDataPerMonthFinal table with the aggregated data
             showDataPerMonthFinal.updateShowDataTable(countDraws, moneyString, countJackpot);
-            //Ενημερώνουμε το label του showDataPerMonthFinal με μήνα και έτος επιλογής του χρήστη
+            //Update the showDataPerMonthFinal label with the month and year of the user's choice
             showDataPerMonthFinal.updateDateLabel(month, year);
-            //Κάνε το παράθυρο ShowDataPerMonth όχι ορατό
+            //Make the ShowDataPerMonth window not visible
             this.setVisible(false);
-            //Κλείσε το παράθυρο ShowDataPerMonth
             this.setDefaultCloseOperation(ShowDataPerMonth.EXIT_ON_CLOSE);
-            //Κατέστρεψε το παράθυρο ShowDataPerMonth
             this.dispose();
         } else {
             this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -289,10 +274,10 @@ public class ShowDataPerMonth extends javax.swing.JFrame {
 
     private void comboYearBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboYearBoxActionPerformed
         if (comboYearBox.getSelectedIndex() != 0) {
-            //Κάθε φορά που αλλάζει η επιλογή του έτους αφαιρούνται οι μήνες της προηγούμενης επιλογής.
+            //Every time the year selection changes the months of the previous selection are removed
             comboMonthBox.removeAllItems();
             invisibleComboBox.removeAllItems();
-            //Γεμίζουμε το comboBox με τους μήνες που είναι αποθηκευμένοι για κάθε χρόνο
+            //Fill the comboBox with the months stored for each year
             comboMonths();
         } else {
             comboMonthBox.removeAllItems();
@@ -306,7 +291,6 @@ public class ShowDataPerMonth extends javax.swing.JFrame {
                 JOptionPane.YES_NO_OPTION);
 
         if (result == JOptionPane.YES_OPTION) {
-            //Τερματισμός
             System.exit(0);
         }
     }//GEN-LAST:event_formWindowClosing
