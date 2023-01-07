@@ -15,4 +15,4 @@
 /out/*
 derby.log
 /db
-*/test/*
+**/test
