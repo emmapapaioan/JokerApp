@@ -42,7 +42,7 @@ public class ManageData extends javax.swing.JFrame {
     /**
      * Creates new form ManageData
      */
-    //Kατασκευάζουμε ένα αντικείμενο τύπου Draws για να του περάσουμε τα δεδομένα κλήρωσης
+    //Construct an object of type Draws to pass the draw data
     public Draws draw = new Draws();
 
     public ManageData() {
@@ -57,41 +57,39 @@ public class ManageData extends javax.swing.JFrame {
                         JOptionPane.YES_NO_OPTION);
 
                 if (JOptionPane.YES_OPTION == result) {
-                    //Kαταστροφή παραθύρου
                     dispose();
-                    //Τερματισμός
                     System.exit(0);
                 }
             }
         });
 
-        GameIdComboBox.setMaximumRowCount(6); //Max γραμμές combobox 6
-        FromDateComboBox.setMaximumRowCount(6); //Max γραμμές combobox 6
-        ToDateComboBox.setMaximumRowCount(6); //Max γραμμές combobox 6
+        GameIdComboBox.setMaximumRowCount(6); //Max lines combobox 6
+        FromDateComboBox.setMaximumRowCount(6); //Max lines combobox 6
+        ToDateComboBox.setMaximumRowCount(6); //Max lines combobox 6
 
-        //Μεταβλητές που αποθηκεύουν τις ημερομηνίες για 2000-01-01 και σήμερα
+        //Variables that store the dates for 2000-01-01 and today
         LocalDate startDate = LocalDate.of(2000, 01, 01);
         LocalDate endDate = LocalDate.now();
         long numOfDays = ChronoUnit.DAYS.between(startDate, endDate);
 
-        //Για τα έτη 2000 έως 2022 φτιάξε λίστα με ημερομηνίες 
+        //For the years 2000 to 2022 make a list of dates
         List<LocalDate> listOfDates1 = Stream.iterate(startDate, date -> date.plusDays(1))
                 .limit(numOfDays + 1)
                 .collect(Collectors.toList());
 
-        //Πρόσθεσε στα ToDateCombobox και ToDateComboBox1 ημερομηνίες
+        //Add dates to ToDateCombobox and ToDateComboBox1
         for (int i = 0; i < listOfDates1.size(); i++) {
             ToDateComboBox.addItem(listOfDates1.get(i).toString());
             ToDateComboBox1.addItem(listOfDates1.get(i).toString());
         }
 
-        //Πρόσθεσε στα FromDateCombobox και FromDateCombobox1 ημερομηνίες
+        //Add dates to FromDateCombobox and FromDateCombobox1
         for (int i = 0; i < listOfDates1.size(); i++) {
             FromDateComboBox.addItem(listOfDates1.get(i).toString());
             FromDateComboBox1.addItem(listOfDates1.get(i).toString());
         }
 
-        //Κάνε null την αρχική επιλογή των παρακάτω comboboxes
+        //Make the initial selection of the following comboboxes null
         GameIdComboBox.setSelectedItem(null);
         FromDateComboBox.setSelectedItem(null);
         ToDateComboBox.setSelectedItem(null);
@@ -290,97 +288,90 @@ public class ManageData extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void returnHomeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_returnHomeButtonActionPerformed
-        //Δημιούργησε ένα αντικείμενο τύπου Home
         Home home = new Home();
-        //Κάνε το αντικείμενο τύπου Home ορατό (Επιστροφή στην αρχική οθόνη)
         home.setVisible(true);
-        //Κάνε το παράθυρο Διαχείρισης δεδομένων όχι ορατό
         this.setVisible(false);
-        //Κλείσε το παράθυρο Διαχείρισης δεδομένων
         this.setDefaultCloseOperation(this.EXIT_ON_CLOSE);
-        //Κατέστρεψε το παράθυρο διαχείρισης δεδομένων
         this.dispose();
     }//GEN-LAST:event_returnHomeButtonActionPerformed
 
     private void deleteGameDataFromDateToDateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteGameDataFromDateToDateButtonActionPerformed
-        //Αν ο χρήστης δεν έχει εισάγει ημερομηνίες
+        //If the user has not entered dates
         if ((FromDateComboBox1.getSelectedItem() == null) || (ToDateComboBox1.getSelectedItem() == null)) {
-            //Ενημερωτικό μήνυμα
+            //Informative message
             JOptionPane.showMessageDialog(null, "Πρέπει να εισάγετε εύρος ημερομηνιών.", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
-            //Επιστροφή
             return;
         }
 
-        //Έλεγχος αν ημερομηνία είναι σε σωστή μορφή
+        //Check if date is in correct format
         DateValidator validator = new DateValidatorUsingDateFormat("yyyy-mm-dd");
         if (!validator.isValid(FromDateComboBox1.getSelectedItem().toString()) || !validator.isValid(ToDateComboBox1.getSelectedItem().toString())) {
             JOptionPane.showMessageDialog(null, "Οι ημερομηνίες δεν είναι σε σωστή μορφή (εεεε-μμ-ηη).", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
-        //Έλεγχος αν η ημερομηνία είναι έγκυρη (πχ 2022-02-30 είναι άκυρη ημερομηνία)
+        //Check if the date is valid (eg 2022-02-30 is an invalid date)
         try {
             LocalDate fromDate = LocalDate.parse(FromDateComboBox1.getSelectedItem().toString());
             LocalDate toDate = LocalDate.parse(ToDateComboBox1.getSelectedItem().toString());
 
-            //Έλεγχος αν οι εισαγώμενες ημερομηνίες είναι μέχρι σήμερα
+            //Check if the entered dates are until today
             if (LocalDate.now().isBefore(fromDate) || LocalDate.now().isBefore(toDate)) {
                 JOptionPane.showMessageDialog(null, "Έχετε εισάγει ημερομηνίες που ξεπερνούν τη σημερινή ημέρα. Προσπαθήστε ξανά.", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
         } catch (DateTimeParseException e) {
             JOptionPane.showMessageDialog(null, "Μη έγκυρη ημερομηνία.", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
-            //Kαθαρισμός ComboBox από άκυρες τιμές
+            //Clean ComboBox from invalid values
             ToDateComboBox1.setSelectedItem(null);
             FromDateComboBox1.setSelectedItem(null);
             return;
         }
 
-        //Υπολογίζουμε πόσες μέρες συνολικά έχει επιλέξει ο χρήστης. Αν το αποτέλεσμα είναι αρνητικό ο χρήστης έχει βάλει με λάθος σειρά τις ημερομηνίες
+        //Calculate how many days in total the user has selected. If the result is negative, the user has put the dates in the wrong order
         LocalDate fromDate = LocalDate.parse(FromDateComboBox1.getSelectedItem().toString());
         LocalDate toDate = LocalDate.parse(ToDateComboBox1.getSelectedItem().toString());
         long fromDateDays = fromDate.toEpochDay();
         long toDateDays = toDate.toEpochDay();
         long duration = toDateDays - fromDateDays + 1;
 
-        //Ενημερωτικό μήνυμα προς το χρήστη σε περίπτωση που η fromDate ημερομηνία είναι μεγαλύτερη από την toDate ημερομηνία
+        //Informative message to the user in case the fromDate date is greater than the toDate date
         if (duration < 0) {
             JOptionPane.showMessageDialog(null, "Λάθος εισαγωγή εύρους ημερομηνιών. Προσπαθήστε ξανά. ", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
-        //Εμφάνιση παραθύρου στο χρήστη για επιβεβαίωση διαγραφής κληρώσεων 
+        //Show window to user to confirm deletion of draws
         int result = JOptionPane.showConfirmDialog(null, "Tο σύστημα θα διαγράψει από τη βάση δεδομένων όλα τα δεδομένα των κληρώσεων από " + FromDateComboBox1.getSelectedItem()
                 + " έως " + ToDateComboBox1.getSelectedItem() + ".\nΕίστε σίγουροι;", "Διαγραφή Δεδομένων Κλήρωσης", JOptionPane.YES_NO_OPTION);
 
-        //Αν ο χρήστης πατήσει αποδοχή διαγραφής δεδομένων
+        //If the user clicks accept delete data
         if (JOptionPane.YES_OPTION == result) {
             System.out.println("ΑΠΟΔΟΧΗ ΔΙΑΓΡΑΦΗΣ ΔΕΔΟΜΕΝΩΝ ΕΝΤΟΣ ΕΥΡΟΥΣ ΗΜΕΡΟΜΗΝΙΩΝ");
 
-            //Δημιουργία EntityManagerFactory
+
             EntityManagerFactory emf = Persistence.createEntityManagerFactory("JokerGameStatsPU");
-            //Δημιουργία EntityManager
             EntityManager em = emf.createEntityManager();
 
-            //Προσπάθεια έναρξης δοσοληψίας με τη βάση δεδομένων
+            //Attempt to start transaction with database
             try {
-                //Έναρξη δοσοληψίας
+                //Start transaction
                 em.getTransaction().begin();
-                //Δημιουργία ερώτησης προς βάση δεδομένων για να διαγράψει όλα τα δεδομένα από τον πίνακα Draw στο δοθέν εύρος ημερομηνιών
+                //Create database query to delete all data from Draw table in given date range
                 Query findDraws = em.createNativeQuery("DELETE FROM DRAW WHERE DATE BETWEEN '" + FromDateComboBox1.getSelectedItem().toString() + "' AND '"
                         + ToDateComboBox1.getSelectedItem().toString() + "'");
 
-                //Διαγραφή από πίνακα Draw όλων των δεδομένων σε συγκεκριμένο εύρος ημερομηνιών (αυτόματα διαγράφονται κι από τον πίνακα Prizecategory)
+                //Delete from the Draw table all data in a certain date range (they are automatically deleted from the Prizecategory table as well)
                 findDraws.executeUpdate();
 
-                //Tερματισμός δοσοληψίας
+                //End transaction
                 em.getTransaction().commit();
-                //Εμφάνιση ενημερωτικού μηνύματος
+                //Display informational message
                 JOptionPane.showMessageDialog(null, "Όσες κληρώσεις υπήρχαν από " + FromDateComboBox1.getSelectedItem().toString() + " έως "
                         + ToDateComboBox1.getSelectedItem().toString() + " διαγράφηκαν επιτυχώς από τη βάση δεδομένων. ", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
-                //Περίπτωση αποτυχίας σύνδεσης με τη βάση δεδομένων
+                //Failed to connect to the database
             } catch (Exception e) {
-                //Εμφάνιση ενημερωτικού μηνύματος ότι δεν πραγματοποιήθηκε διαγραφή
+                //Display an informational message that no deletion took place
                 JOptionPane.showMessageDialog(null, "Η διαγραφή δεν ήταν επιτυχής. Προσπαθήστε ξανά.", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
             }
 
@@ -388,38 +379,37 @@ public class ManageData extends javax.swing.JFrame {
             em.close();
             emf.close();
 
-        } //Aν ο χρήστης δεν αποδεχτεί τη διαγραφή δεδομένων
+        } //If the user does not accept the deletion of data
         else if (JOptionPane.NO_OPTION == result) {
-            //TODO code
             System.out.println("MH ΑΠΟΔΟΧΗ ΔΙΑΓΡΑΦΗΣ ΔΕΔΟΜΕΝΩΝ ΕΝΤΟΣ ΕΥΡΟΥΣ ΗΜΕΡΟΜΗΝΙΩΝ");
-        } //Αν ο χρήστης κλείσει το παράθυρο
-        else //ΤΟDO code
+        } //If the user closes the window
+        else
         {
             System.out.println("ΚΛΕΙΣΙΜΟ ΠΑΡΑΘΥΡΟΥ");
         }
     }//GEN-LAST:event_deleteGameDataFromDateToDateButtonActionPerformed
 
     private void SearchDateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchDateButtonActionPerformed
-        //Αποτέλεσμα αναζήτησης με εύρος ημερομηνιών
+        //Search result with date range
 
-        //Καθαρίζουμε, αν υπάρχουν, τα δεδομένα του drawIdComboBox
+        //Clear, if any, the drawIdComboBox data
         GameIdComboBox.removeAllItems();
-        //Αν ο χρήστης έχει εισάγει ημερομηνίες
+        //If the user has entered dates
         if (((FromDateComboBox.getSelectedItem() != null) && (ToDateComboBox.getSelectedItem() != null))) {
 
-            //Έλεγχος αν ημερομηνία είναι σε σωστή μορφή
+            //Check if date is in correct format
             DateValidator validator = new DateValidatorUsingDateFormat("yyyy-mm-dd");
             if (!validator.isValid(FromDateComboBox.getSelectedItem().toString()) || !validator.isValid(ToDateComboBox.getSelectedItem().toString())) {
                 JOptionPane.showMessageDialog(null, "Οι ημερομηνίες δεν είναι σε σωστή μορφή (εεεε-μμ-ηη).", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
 
-            //Έλεγχος αν η ημερομηνία είναι έγκυρη (πχ 2022-02-30 είναι άκυρη ημερομηνία)
+            //Check if the date is valid (eg 2022-02-30 is an invalid date)
             try {
                 LocalDate fromDate = LocalDate.parse(FromDateComboBox.getSelectedItem().toString());
                 LocalDate toDate = LocalDate.parse(ToDateComboBox.getSelectedItem().toString());
 
-                //Έλεγχος αν οι εισαγώμενες ημερομηνίες είναι μέχρι σήμερα
+                //Check if the entered dates are up to date
                 if (LocalDate.now().isBefore(fromDate) || LocalDate.now().isBefore(toDate)) {
                     JOptionPane.showMessageDialog(null, "Έχετε εισάγει ημερομηνίες που ξεπερνούν τη σημερινή ημέρα. Προσπαθήστε ξανά.", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
                     return;
@@ -430,25 +420,25 @@ public class ManageData extends javax.swing.JFrame {
                 return;
             }
 
-            //Υπολογίζουμε από πόσες ημέρες επιλέγει ο χρήστης να αντλήσει πληροφορίες διότι μπορεί να αντλήσει πληροφορίες έως 3 μηνών (94 ημερών)
+            //We calculate from how many days the user chooses to get information from because he can get information up to 3 months (94 days)
             LocalDate fromDate = LocalDate.parse(FromDateComboBox.getSelectedItem().toString());
             LocalDate toDate = LocalDate.parse(ToDateComboBox.getSelectedItem().toString());
             long fromDateDays = fromDate.toEpochDay();
             long toDateDays = toDate.toEpochDay();
             long duration = toDateDays - fromDateDays + 1;
 
-            //Ενημερωτικό μήνυμα προς το χρήστη σε περίπτωση που η fromDate ημερομηνία είναι μεγαλύτερη από την toDate ημερομηνία
+            //Informative message to the user in case the fromDate date is greater than the toDate date
             if (duration < 0) {
                 JOptionPane.showMessageDialog(null, "Λάθος εισαγωγή εύρους ημερομηνιών. Προσπαθήστε ξανά. ", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
-            //Αρχικοποιούμε τη ζώνη ώρας γιατί θα μας χρειαστεί στις μετατροπές ημερομηνιών
+            //Initialize the timezone because we will need it in date conversions
             ZoneId defaultZoneId = ZoneId.systemDefault();
-            //Δημιουργούμε μία λίστα με αντικείμενα τύπου Draw για να αποθηκεύσουμε τα δεδομένα που αντλούμε από το json
+            //Create a list of Draw objects to store the data we pull from the json
 
-            //Αν το εύρος ημερομηνιών που εισάγει ο χρήστης ξεπερνάει τις 94 ημέρες
-            //το url δεν επιστρέφει δεδομένα
-            //Οπότε "σπάμε" τις ημερομηνίες σε κομμάτια και καλούμε το url για να αντλήσουμε δεδομένα ανά "κομμάτι"
+            //If the date range entered by the user exceeds 94 days
+            //url returns no data
+            //So we "break" the dates into chunks and call the url to fetch data per "chunk"
             while (duration > 94) {
                 toDate = fromDate.plusDays(93);
                 Date dateTo = Date.from(toDate.atStartOfDay(defaultZoneId).toInstant());
@@ -458,31 +448,31 @@ public class ManageData extends javax.swing.JFrame {
                 String df = simpleDateFormat.format(dateFrom);
                 String dt = simpleDateFormat.format(dateTo);
 
-                //Διαδικασία για κλήση url
-                //Περνάμε το url που θα καλέσουμε σε ενα string
+                //Procedure to call url
+                //We pass the url to be called to a string
                 String urlToCall = "https://api.opap.gr/draws/v3.0/5104/draw-date/" + df + "/" + dt + "/draw-id";
                 OkHttpClient client = new OkHttpClient();
 
                 Request request = new Request.Builder().url(urlToCall).build();
 
-                //Καλούμε το κατάλληλο url 
+                //Call the appropriate url
                 try (Response response = client.newCall(request).execute()) {
                     if (response.isSuccessful() && response.body() != null) {
                         String responseString = response.body().string();
 
-                        //Διαδικασία άντλησης των δεδομένων του Json
-                        //Δημιουργούμε ένα αντικείμενο GsonBuilder
+                        //Process to extract the Json data
+                        //Create a GsonBuilder object
                         GsonBuilder builder = new GsonBuilder();
                         Gson gson = builder.create();
-                        //Παίρνουμε τα αποτελέσματα σε JsonArray 
+                        //Get the results into a JsonArray
                         JsonArray json = gson.fromJson(responseString, JsonArray.class);
 
-                        //Περνάμε τα δεδομένα από το JsonArray στο GameIdComboBox
+                        //Pass the data from JsonArray to GameIdComboBox
                         for (int i = 0; i < json.size(); i++) {
                             GameIdComboBox.addItem(json.get(i).toString());
                         }
 
-                        //Yπολογίζουμε τις νέες ημερομηνίες για τις οποίες θα πραγματοποιηθεί κλήση Url
+                        //Calculate the new dates for which Url will be called
                         duration = duration - 94;
                         fromDate = toDate.plusDays(1);
                         if (duration == 0) {
@@ -492,14 +482,14 @@ public class ManageData extends javax.swing.JFrame {
                         }
 
                     } else {
-                        //Ενημερωτικό μήνυμα σε περίπτωση λανθασμένης εισαγωγής ημερομηνιών (FromDate>ToDate)
+                        //Informative message in case of incorrect date input (FromDate>ToDate)
                         JOptionPane.showMessageDialog(null, "Λάθος εισαγωγή ημερομηνιών. ", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
                     }
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(null, "Πρόβλημα κλήσης URL. Προσπαθήστε ξανά.", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
-            //Αν έχουν απομείνει μέρες που δεν αντλήσαμε δεδομένα υπαναυπολογισμός ημερομηνιών και επανάκληση url
+            //If there are days left when we didn't pull data recalculate dates and callback url
             if (duration > 0 && duration < 95) {
                 Date dateTo = Date.from(toDate.atStartOfDay(defaultZoneId).toInstant());
                 Date dateFrom = Date.from(fromDate.atStartOfDay(defaultZoneId).toInstant());
@@ -508,33 +498,32 @@ public class ManageData extends javax.swing.JFrame {
                 String df = simpleDateFormat.format(dateFrom);
                 String dt = simpleDateFormat.format(dateTo);
 
-                //Διαδικασία για κλήση url
-                //Περνάμε το url που θα καλέσουμε σε ενα string
+                //Procedure to call url
+                //We pass the url to be called to a string
                 String urlToCall = "https://api.opap.gr/draws/v3.0/5104/draw-date/" + df + "/" + dt + "/draw-id";
                 OkHttpClient client = new OkHttpClient();
 
                 Request request = new Request.Builder().url(urlToCall).build();
 
-                //Καλούμε το κατάλληλο url 
+                //Call the appropriate url
                 try (Response response = client.newCall(request).execute()) {
                     if (response.isSuccessful() && response.body() != null) {
                         String responseString = response.body().string();
 
-                        //Διαδικασία άντλησης των δεδομένων του Json
-                        //Δημιουργούμε ένα αντικείμενο GsonBuilder
+                        //Process to extract the Json data
+                        //Create a GsonBuilder object
                         GsonBuilder builder = new GsonBuilder();
                         Gson gson = builder.create();
-                        //Παίρνουμε τα αποτελέσματα σε JsonArray 
+                        //Get the results into a JsonArray
                         JsonArray json = gson.fromJson(responseString, JsonArray.class);
 
-                        //Περνάμε τα δεδομένα από το JsonArray στο GameIdComboBox
+                        //Pass the data from JsonArray to GameIdComboBox
                         for (int i = 0; i < json.size(); i++) {
                             GameIdComboBox.addItem(json.get(i).toString());
                         }
 
                     } else {
-                        //ισως πρεπει να διαγραφει************************************************************
-                        //Ενημερωτικό μήνυμα σε περίπτωση λανθασμένης εισαγωγής ημερομηνιών (FromDate>ToDate)
+                        //Informative message in case of incorrect date input (FromDate>ToDate)
                         JOptionPane.showMessageDialog(null, "Λάθος εισαγωγή ημερομηνιών. ", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
                     }
                 } catch (IOException e) {
@@ -542,23 +531,22 @@ public class ManageData extends javax.swing.JFrame {
                 }
             }
 
-        } //Αν ο χρήστης πατήσει αναζήτηση χωρίς να έχει επιλέξει εύρος ημερομηνιών τότε του εμφανίζει ενημερωτικό μήνυμα  
+        } //If the user clicks search without having selected a date range then it displays an informational message
         else if (((FromDateComboBox.getSelectedItem() == null) || (ToDateComboBox.getSelectedItem() == null))) {
-            //Ενημερωτικό μήνυμα
+            //Informative message
             JOptionPane.showMessageDialog(null, "Πρέπει να εισάγετε ημερομηνίες. ", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_SearchDateButtonActionPerformed
 
     private void deleteGameDataButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteGameDataButtonActionPerformed
-        //Αν ο χρήστης δεν έχει εισάγει κωδικό κλήρωσης
+        //If the user has not entered a raffle code
         if ((GameIdComboBox1.getSelectedItem() == null)) {
-            //Ενημερωτικό μήνυμα
+            //Informative message
             JOptionPane.showMessageDialog(null, "Πρέπει να εισάγετε αριθμό κλήρωσης παιχνιδιού.", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
-            //Επιστροφή
             return;
         }
 
-        //Έλεγος αν η εισαγώμενη προς διαγραφή κλήρωση είναι σε σωστή μορφή
+        //Check if the entered draw to be deleted is in the correct format
         try {
             Integer.parseInt((String) GameIdComboBox1.getSelectedItem());
         } catch (NumberFormatException e) {
@@ -566,39 +554,37 @@ public class ManageData extends javax.swing.JFrame {
             return;
         }
 
-        //Eνημερωτικό μήνυμα προς χρήστη
+        //Informative message to user
         int result = JOptionPane.showConfirmDialog(null, "Tο σύστημα θα διαγράψει από τη βάση δεδομένων τα δεδομένα της κλήρωσης με αριθμό " + GameIdComboBox1.getSelectedItem()
                 + ".\nΕίστε σίγουροι;", "Διαγραφή Δεδομένων Κλήρωσης", JOptionPane.YES_NO_OPTION);
 
-        //Aν ο χρήστης επιβεβαιώσει τη διαγραφή της κλήρωσης από τη βάση δεδομένων
+        //If the user confirms the deletion of the draw from the database
         if (JOptionPane.YES_OPTION == result) {
             System.out.println("ΑΠΟΔΟΧΗ ΔΙΑΓΡΑΦΗΣ");
 
-            //Δημιουργία EntityManagerFactory
             EntityManagerFactory emf = Persistence.createEntityManagerFactory("JokerGameStatsPU");
-            //Δημιουργία EntityManager
             EntityManager em = emf.createEntityManager();
 
-            //Προσπάθεια έναρξης δοσοληψίας με τη βάση δεδομένων για διαγραφή κλήρωσης
+            //Attempt to start transaction with database to clear draw
             try {
-                //Έναρξη δοσοληψίας
+                //Start transaction
                 em.getTransaction().begin();
-                //Διαγραφή εγγραφών με το επιλεγμένο drawId, από πίνακες βάσης δεδομένων 
+                //Delete records with the selected drawId, from database tables
                 Query selectDraw = em.createNamedQuery("Draw.findById", Draw.class);
                 selectDraw.setParameter("id", Integer.parseInt((String) GameIdComboBox1.getSelectedItem()));
 
                 try {
                     Draw drawPj = (Draw) selectDraw.getSingleResult();
                     em.remove(drawPj);
-                    //Tερματισμός δοσοληψίας
+                    //End transaction
                     em.getTransaction().commit();
-                    //Ενημερωτικό μήνυμα
+                    //Informative message
                     JOptionPane.showMessageDialog(null, "Τα δεδομένα της κλήρωσης διαγράφηκαν επιτυχώς από τη βάση δεδομένων.", "Eνημέρωση", JOptionPane.INFORMATION_MESSAGE);
 
                 } catch (NoResultException ex) {
-                    //Tερματισμός δοσοληψίας
+                    //End transaction
                     em.getTransaction().commit();
-                    //Ενημερωτικό μήνυμα σε περίπτωση που επιλεγμένη προς διαγραφή κλήρωση, δεν υπάρχει
+                    //Informative message in case the lottery selected to be deleted does not exist
                     JOptionPane.showMessageDialog(null, "Η κλήρωση που επιλέξατε δεν είναι καταχωρημένη στη βάση δεδομένων.", "Eνημέρωση", JOptionPane.INFORMATION_MESSAGE);
                 }
 
@@ -606,25 +592,25 @@ public class ManageData extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Η διαγραφή δεν ήταν επιτυχής. Προσπαθήστε ξανά.", "Σφάλμα", JOptionPane.INFORMATION_MESSAGE);
             }
 
-            //Καταστροφή EntityManagerFactory και EntityManager
+            //Destroy EntityManagerFactory and EntityManager
             em.close();
             emf.close();
         }
-        //Αν ο χρήστης απορρίψει τη διαγραφή της κλήρωσης από τη βάση δεδομένων δε συμβαίνει τίποτα
+        //If the user declines to delete the draw from the database nothing happens
 
 
     }//GEN-LAST:event_deleteGameDataButtonActionPerformed
 
     private void SearchDrawIdButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchDrawIdButtonActionPerformed
-        //Αποτέλεσμα αναζήτησης με κωδικό κλήρωσης
+        //Search result with lottery code
 
-        //Αν ο χρήστης πατήσει αναζήτηση βάση drawId αλλά δεν έχει εισάγει drawId εμφανίζεται σχετικό μήνυμα στην οθόνη
+        //If the user presses search based on drawId but has not entered a drawId, a relevant message appears on the screen
         if ((GameIdComboBox.getSelectedItem() == null)) {
-            //Ενημερωτικό μήνυμα
+            //Informative message
             JOptionPane.showMessageDialog(null, "Πρέπει να εισάγετε αριθμό κλήρωσης παιχνιδιού.", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
         } else if ((GameIdComboBox.getSelectedItem() != null)) {
 
-            //Διαδικασία κλήσης url
+            //Call process url
             String urlToCall = "https://api.opap.gr/draws/v3.0/5104/" + GameIdComboBox.getSelectedItem().toString();
             OkHttpClient client = new OkHttpClient();
 
@@ -634,29 +620,29 @@ public class ManageData extends javax.swing.JFrame {
                 if (response.isSuccessful() && response.body() != null) {
                     String responseString = response.body().string();
 
-                    //Διαδικασία άντλησης των δεδομένων του Json
-                    //Δημιουργούμε ένα αντικείμενο GsonBuilder
+                    //Process to extract the Json data
+                    //Create a GsonBuilder object
                     GsonBuilder builder = new GsonBuilder();
                     builder.setPrettyPrinting();
                     Gson gson = builder.create();
-                    //Δημιουργούμε ένα JsonObject που περιέχει το Json που αντλήσαμε
+                    //Create a JsonObject that contains the Json we extracted
                     JsonObject jsonObj = gson.fromJson(responseString, JsonObject.class);
-                    //Δημιουργούμε ένα JsonObject που περιέχει το JsonObject με όνομα winningNumbers
+                    //Create a JsonObject containing the JsonObject named winningNumbers
                     JsonObject winningNumbersObj = jsonObj.getAsJsonObject("winningNumbers");
-                    //Δημιουργούμε ένα JsonArray που παίρνει ως ορίσματα τη λίστα που περιέχει τους winningNumbers
+                    //We create a JsonArray that takes as arguments the list containing the winningNumbers
                     JsonArray winningNumbers = winningNumbersObj.getAsJsonArray("list");
-                    //Δημιουργούμε ένα JsonArray που παίρνει ως ορίσματα τα περιεχόμενα του JsonArray με όνομα bonus
+                    //Create a JsonArray that takes as arguments the contents of the JsonArray named bonus
                     JsonArray bonus = winningNumbersObj.getAsJsonArray("bonus");
-                    //Δημιουργούμε ένα JsonArray που παίρνει ως ορίσματα τα περιεχόμενα του JsonArray με όνομα prizeCategories
+                    //Create a JsonArray that takes as arguments the contents of the JsonArray named prizeCategories
                     JsonArray prizeCategories = jsonObj.getAsJsonArray("prizeCategories");
-                    //Aποθηκεύουμε στη μεταβλητή drawId τον αριθμό κλήρωσης που πήραμε από το JsonObject
+                    //We store in the drawId variable the draw number we got from the JsonObject
                     int drawId = jsonObj.get("drawId").getAsInt();
-                    //Αποθηκεύουμε στη μεταβλητή drawTime την ημερομηνία και ώρα που έγινε η κλήρωση και που πήραμε από το JsonObject
+                    //Store in the drawTime variable the date and time that the draw took place, which we got from the JsonObject
                     long drawTime = jsonObj.get("drawTime").getAsLong();
 
-                    //Διαδικασία για να προβληθούν τα δεδομένα για συγκεκριμένο drawId (winningNumbers,βασικές κατηγορίες επιτυχιών 
-                    //και για κάθε κατηγορία θέλουμε:winners,divident)
-                    //Προσωρινή αποθήκευση δεδομένων κλήρωσης
+                    //Procedure to view the data for a specific drawId(winningNumbers, winnings baseCategories
+                    //and for each category we want:winners,dividend)
+                    //Temporary storage of draw data
                     int[] winningNumbersArray = new int[6];
                     for (int i = 0; i < 6; i++) {
                         int winningNumber;
@@ -669,17 +655,17 @@ public class ManageData extends javax.swing.JFrame {
 
                     }
 
-                    //Επειδή θέλουμε να εμφανίζονται στον πίνακα τα αποτελέσματα μιας κλήρωσης κάθε φορά φτιάχνουμε νέο αντικείμενο
+                    //Because we want the results of a draw to be displayed in the table every time we create a new object
                     draw.prizeCategories = new ArrayList<PrizeCategory>();
 
-                    //Αποθηκεύουμε τα δεδομένα που αντλούμε από το json
+                    //Store the data we get from the json
                     for (int i = 0; i < prizeCategories.size(); i++) {
                         JsonObject prizeCategory = prizeCategories.get(i).getAsJsonObject();
                         int winners = prizeCategories.get(i).getAsJsonObject().get("winners").getAsInt();
                         double divident = prizeCategories.get(i).getAsJsonObject().get("divident").getAsDouble();
 
-                        //Αν η κλήρωση έχει αριθμό 1-209 τότε μετατροπή των δραχμών σε ευρώ και στρογγυλοποίηση αποτελέσματος στα 2 ψηφία
-                        //θεωρούμε ότι η τότε συναλλαγματική αξία του ευρώ ήταν 1EURO=340.75GRD
+                        //If the lottery number is 1-209 then convert the drachmas to euros and round the result to 2 digits
+                        //we consider that the then exchange value of the euro was 1EURO=340.75GRD
                         if (drawId >= 1 && drawId <= 209) {
                             divident = Math.round((divident / 340.75) * 100.0) / 100.0;
                         }
@@ -695,16 +681,16 @@ public class ManageData extends javax.swing.JFrame {
                         draw.setBonusNumber(bonus.get(0).getAsInt());
                         draw.addCategory(prc);
                     }
-                    //Δημιουργία αντικείμενου τύπου jframe DrawData για να εμφανίσουμε τα αποτελέσματα
+                    //Create a jframe DrawData object to display the results
                     DrawData drawData = new DrawData();
-                    //Ενημέρωση πίνακα resultTable του jframe DrawData
+                    //Update resultTable of jframe DrawData
                     drawData.UpdateResultTable(draw);
                     drawData.updateDrawData(draw);
 
-                    //Εμφάνισε την οθόνη DrawData που περιέχει τον πίνακα με τα ζητούμενα δεδομένα
+                    //Display the DrawData screen containing the array with the requested data
                     drawData.setVisible(true);
                 } else {
-                    //Ενημέρωση χρήστη σε περίπτωση που εισάγει λάθος δεδομένα ή η εισαγώμενη κλήρωση δεν υπάρχει
+                    //Notify user in case he enters wrong data or the entered draw does not exist
                     JOptionPane.showMessageDialog(null, "Η κλήρωση δεν υπάρχει. "
                             + "(Input= " + GameIdComboBox.getSelectedItem().toString() + ")", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -717,25 +703,25 @@ public class ManageData extends javax.swing.JFrame {
     }//GEN-LAST:event_SearchDrawIdButtonActionPerformed
 
     private void ShowDataDateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ShowDataDateButtonActionPerformed
-        //Αποτέλεσμα αναζήτησης με εύρος ημερομηνιών
+        //Search result with date range
 
-        //Αν ο χρήστης έχει εισάγει ημερομηνίες
+        //If the user has entered dates
         if (((FromDateComboBox.getSelectedItem() != null) && (ToDateComboBox.getSelectedItem() != null))) {
 
-            //Έλεγχος αν ημερομηνία είναι σε σωστή μορφή
+            //Check if date is in correct format
             DateValidator validator = new DateValidatorUsingDateFormat("yyyy-mm-dd");
             if (!validator.isValid(FromDateComboBox.getSelectedItem().toString()) || !validator.isValid(ToDateComboBox.getSelectedItem().toString())) {
                 JOptionPane.showMessageDialog(null, "Οι ημερομηνίες δεν είναι σε σωστή μορφή (εεεε-μμ-ηη).", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
 
-            //Έλεγχος αν οι εισαγώμενες ημερομηνίες είναι μέχρι σήμερα
-            //Έλεγχος αν η ημερομηνία είναι έγκυρη (πχ 2022-02-30 είναι άκυρη ημερομηνία)
+            //Check if the entered dates are up to date
+            //Check if the date is valid (eg 2022-02-30 is an invalid date)
             try {
                 LocalDate fromDate = LocalDate.parse(FromDateComboBox.getSelectedItem().toString());
                 LocalDate toDate = LocalDate.parse(ToDateComboBox.getSelectedItem().toString());
 
-                //Έλεγχος αν οι εισαγώμενες ημερομηνίες είναι μέχρι σήμερα
+                //Check if the entered dates are up to date
                 if (LocalDate.now().isBefore(fromDate) || LocalDate.now().isBefore(toDate)) {
                     JOptionPane.showMessageDialog(null, "Έχετε εισάγει ημερομηνίες που ξεπερνούν τη σημερινή ημέρα. Προσπαθήστε ξανά.", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
                     return;
@@ -745,25 +731,25 @@ public class ManageData extends javax.swing.JFrame {
                 return;
             }
 
-            //Υπολογίζουμε από πόσες ημέρες επιλέγει ο χρήστης να αντλήσει πληροφορίες διότι μπορεί να αντλήσει πληροφορίες έως 3 μηνών (94 ημερών)
+            //We calculate from how many days the user chooses to get information from because he can get information up to 3 months (94 days)
             LocalDate fromDate = LocalDate.parse(FromDateComboBox.getSelectedItem().toString());
             LocalDate toDate = LocalDate.parse(ToDateComboBox.getSelectedItem().toString());
             long fromDateDays = fromDate.toEpochDay();
             long toDateDays = toDate.toEpochDay();
             long duration = toDateDays - fromDateDays + 1;
 
-            //Ενημερωτικό μήνυμα προς το χρήστη σε περίπτωση που η fromDate ημερομηνία είναι μεγαλύτερη από την toDate ημερομηνία
+            //Informative message to the user in case the fromDate date is greater than the toDate date
             if (duration < 0) {
                 JOptionPane.showMessageDialog(null, "Λάθος εισαγωγή εύρους ημερομηνιών. Προσπαθήστε ξανά. ", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
-            //Αρχικοποιούμε τη ζώνη ώρας γιατί θα μας χρειαστεί στις μετατροπές ημερομηνιών
+            //Initialize the timezone because we will need it in date conversions
             ZoneId defaultZoneId = ZoneId.systemDefault();
-            //Δημιουργούμε μία λίστα με αντικείμενα τύπου Draw για να αποθηκεύσουμε τα δεδομένα που αντλούμε από το json
+            //Create a list of Draw objects to store the data we pull from the json
             ArrayList<Draws> draws = new ArrayList<>();
-            //Αν το εύρος ημερομηνιών που εισάγει ο χρήστης ξεπερνάει τις 94 ημέρες
-            //το url δεν επιστρέφει δεδομένα
-            //Οπότε "σπάμε" τις ημερομηνίες σε κομμάτια και καλούμε το url για να αντλήσουμε δεδομένα ανά "κομμάτι"
+            //If the date range entered by the user exceeds 94 days
+            //url returns no data
+            //So we "break" the dates into chunks and call the url to fetch data per "chunk"
             while (duration > 94) {
                 toDate = fromDate.plusDays(93);
                 Date dateTo = Date.from(toDate.atStartOfDay(defaultZoneId).toInstant());
@@ -773,28 +759,28 @@ public class ManageData extends javax.swing.JFrame {
                 String df = simpleDateFormat.format(dateFrom);
                 String dt = simpleDateFormat.format(dateTo);
 
-                //Διαδικασία για κλήση url
-                //Περνάμε το url που θα καλέσουμε σε ενα string
+                //Procedure to call url
+                //We pass the url to be called to a string
                 String urlToCall = "https://api.opap.gr/draws/v3.0/5104/draw-date/" + df + "/" + dt + "/?limit=200";
                 OkHttpClient client = new OkHttpClient();
 
                 Request request = new Request.Builder().url(urlToCall).build();
 
-                //Καλούμε το κατάλληλο url 
+                //Call the appropriate url
                 try (Response response = client.newCall(request).execute()) {
                     if (response.isSuccessful() && response.body() != null) {
                         String responseString = response.body().string();
 
-                        //Διαδικασία άντλησης των δεδομένων του Json
-                        //Δημιουργούμε ένα αντικείμενο GsonBuilder
+                        //Process to extract the Json data
+                        //Create a GsonBuilder object
                         GsonBuilder builder = new GsonBuilder();
                         Gson gson = builder.create();
-                        //Δημιουργούμε ένα JsonObject που περιέχει το Json που αντλήσαμε
+                        //Create a JsonObject that contains the Json we extracted
                         JsonObject jsonObj = gson.fromJson(responseString, JsonObject.class);
-                        //Δημιουργούμε ενα JsonArray που περιέχει τα Objects 
+                        //Create a JsonArray containing the Objects
                         JsonArray content = jsonObj.getAsJsonArray("content");
 
-                        //Aντλούμε τα επιθυμητά δεδομένα από το json και τα περνάμε σε αντικείμενα τύπου Draw
+                        //We extract the desired data from json and pass it to objects of type Draw
                         for (JsonElement draw : content) {
                             int drawId = draw.getAsJsonObject().get("drawId").getAsInt();
                             long drawTime = draw.getAsJsonObject().get("drawTime").getAsLong();
@@ -810,7 +796,7 @@ public class ManageData extends javax.swing.JFrame {
                             drawObj.setBonusNumber(bonusNumbers.get(0).getAsInt());
                             drawObj.setDrawTime(drawTime);
 
-                            //Αντλούμε τα επιθυμητά δεδομένα από το json και τα περνάμε σε αντικείμενα τύπου PrizeCategory
+                            // We extract the desired data from the json and pass it to objects of type PrizeCategory
                             for (JsonElement prizeCategory : prizeCategories) {
                                 double divident = prizeCategory.getAsJsonObject().get("divident").getAsDouble();
                                 int winners = prizeCategory.getAsJsonObject().get("winners").getAsInt();
@@ -822,7 +808,7 @@ public class ManageData extends javax.swing.JFrame {
                             draws.add(drawObj);
                         }
 
-                        //Yπολογίζουμε τις νέες ημερομηνίες για τις οποίες θα πραγματοποιηθεί κλήση Url
+                        //Calculate the new dates for which Url will be called
                         duration = duration - 94;
                         fromDate = toDate.plusDays(1);
                         if (duration == 0) {
@@ -832,14 +818,14 @@ public class ManageData extends javax.swing.JFrame {
                         }
 
                     } else {
-                        //Ενημερωτικό μήνυμα σε περίπτωση λανθασμένης εισαγωγής ημερομηνιών (FromDate>ToDate)
+                        //Informative message in case of incorrect date input (FromDate>ToDate)
                         JOptionPane.showMessageDialog(null, "Λάθος εισαγωγή ημερομηνιών. ", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
                     }
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(null, "Πρόβλημα κλήσης URL. Προσπαθήστε ξανά.", "Σφάλμα", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
-            //Αν έχουν απομείνει μέρες που δεν αντλήσαμε δεδομένα επαναϋπολογισμός ημερομηνιών και επανάκληση url
+            //If there are days left when we didn't pull data recalculate dates and callback url
             if (duration > 0 && duration < 95) {
                 Date dateTo = Date.from(toDate.atStartOfDay(defaultZoneId).toInstant());
                 Date dateFrom = Date.from(fromDate.atStartOfDay(defaultZoneId).toInstant());
@@ -848,29 +834,29 @@ public class ManageData extends javax.swing.JFrame {
                 String df = simpleDateFormat.format(dateFrom);
                 String dt = simpleDateFormat.format(dateTo);
 
-                //Διαδικασία για κλήση url
-                //Περνάμε το url που θα καλέσουμε σε ενα string
+                //Procedure to call url
+                //We pass the url to be called to a string
                 String urlToCall = "https://api.opap.gr/draws/v3.0/5104/draw-date/" + df + "/" + dt + "/?limit=200";
                 OkHttpClient client = new OkHttpClient();
 
                 Request request = new Request.Builder().url(urlToCall).build();
 
-                //Καλούμε το κατάλληλο url 
+                //Call the appropriate url
                 try (Response response = client.newCall(request).execute()) {
                     if (response.isSuccessful() && response.body() != null) {
                         String responseString = response.body().string();
 
-                        //Διαδικασία άντλησης των δεδομένων του Json
-                        //Δημιουργούμε ένα αντικείμενο GsonBuilder
+                        //Process to extract the Json data
+                        //Create a GsonBuilder object
                         GsonBuilder builder = new GsonBuilder();
                         Gson gson = builder.create();
-                        //Δημιουργούμε ένα JsonObject που περιέχει το Json που αντλήσαμε
+                        //Create a JsonObject that contains the Json we extracted
                         JsonObject jsonObj = gson.fromJson(responseString, JsonObject.class);
 
-                        //Δημιουργούμε ενα JsonArray που περιέχει τα Objects 
+                        //Create a JsonArray containing the Objects
                         JsonArray content = jsonObj.getAsJsonArray("content");
 
-                        //Αντλούμε τα επιθυμητά δεδομένα από το json και τα περνάμε σε αντικείμενα τύπου Draw
+                        //We extract the desired data from the json and pass it to objects of type Draw
                         for (JsonElement draw : content) {
                             int drawId = draw.getAsJsonObject().get("drawId").getAsInt();
                             long drawTime = draw.getAsJsonObject().get("drawTime").getAsLong();
@@ -886,7 +872,7 @@ public class ManageData extends javax.swing.JFrame {
                             drawObj.setBonusNumber(bonusNumbers.get(0).getAsInt());
                             drawObj.setDrawTime(drawTime);
 
-                            //Aντλούμε τα επιθμητά δεδομένα από το json και τα περνάμε σε αντικείμενα τύπου PrizeCategory
+                            //We extract the required data from the json and pass it to objects of type PrizeCategory
                             for (JsonElement prizeCategory : prizeCategories) {
                                 double divident = prizeCategory.getAsJsonObject().get("divident").getAsDouble();
                                 int winners = prizeCategory.getAsJsonObject().get("winners").getAsInt();
@@ -899,7 +885,7 @@ public class ManageData extends javax.swing.JFrame {
                         }
 
                     } else {
-                        //Ενημερωτικό μήνυμα σε περίπτωση λανθασμένης εισαγωγής ημερομηνιών (FromDate>ToDate)
+                        //Informative message in case of incorrect date input (FromDate>ToDate)
                         JOptionPane.showMessageDialog(null, "Λάθος εισαγωγή ημερομηνιών. ", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
                     }
                 } catch (IOException e) {
@@ -907,16 +893,16 @@ public class ManageData extends javax.swing.JFrame {
                     return;
                 }
             }
-            //Δημιουργούμε ένα jframe στο οποίο θα εμφανιστούν τα αποτελέσματα
+            //Create a jframe in which to display the results
             DynamicDrawData dynamicDrawData = new DynamicDrawData();
-            //Ενημερώνουμε τον πίνακα που θα προβληθεί στο jframe dynamicDrawData προβολής δεδομένων κληρώσεων 
+            //Update the table to be displayed in the draw data view jframe dynamicDrawData
             dynamicDrawData.updateTables(draws);
-            //Kάνουμε ορατό το jframe dynamicDrawData προβολής δεδομένων κληρώσεων
+            //Make visible the jframe dynamicDrawData display of draw data
             dynamicDrawData.setVisible(true);
 
-        } //Αν ο χρήστης πατήσει αναζήτηση χωρίς να έχει επιλέξει εύρος ημερομηνιών τότε του εμφανίζει ενημερωτικό μήνυμα  
+        } //If the user clicks search without having selected a date range then it displays an informational message
         else if (((FromDateComboBox.getSelectedItem() == null) || (ToDateComboBox.getSelectedItem() == null))) {
-            //Ενημερωτικό μήνυμα
+            //Informative message
             JOptionPane.showMessageDialog(null, "Πρέπει να εισάγετε ημερομηνίες. ", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_ShowDataDateButtonActionPerformed

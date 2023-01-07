@@ -5,14 +5,15 @@
  */
 package frames;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
  *
- * @authors Papaioannou Emmanolia 
- *          Lymperis Dimitrios 
+ * @authors Papaioannou Emmanolia
+ *          Lymperis Dimitrios
  *          Chatzhioannou Ioannis
  */
 public class About extends javax.swing.JFrame {
@@ -23,7 +24,7 @@ public class About extends javax.swing.JFrame {
     public About() {
         initComponents();
         setTitle("JokerGame-Stats");
-        //Ονόματα ομάδας, εμφανίζονται με τυχαία σειρά
+        //Team members names, displayed in random order
         List<String> teamNames = new ArrayList<>();
         teamNames.add("Παπαϊωάννου Εμμανολία");
         teamNames.add("Λυμπέρης Δημήτριος");
@@ -138,13 +139,8 @@ public class About extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(About.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(About.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(About.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
+                 UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(About.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>

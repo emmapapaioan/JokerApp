@@ -32,9 +32,7 @@ public class Home extends javax.swing.JFrame {
                         JOptionPane.YES_NO_OPTION);
 
                 if (JOptionPane.YES_OPTION == result) {
-                    //Kαταστροφή παραθύρου
                     dispose();
-                    //Τερματισμός
                     System.exit(0);
                 }
             }
@@ -179,61 +177,42 @@ public class Home extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void showDataButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showDataButtonActionPerformed
-        //Δημιούργησε ένα αντικείμενο τύπου ShowDataPerMonth
         ShowDataPerMonth showData = new ShowDataPerMonth();
-        //Κάνε το αντικείμενο showData ορατό (Οθόνη Προβολής δεδομένων ανά μήνα)
         showData.setVisible(true);
-        //Κάνε το παράθυρο home όχι ορατό
         this.setVisible(false);
-        //Κλείσε το παράθυρο home
         this.setDefaultCloseOperation(this.EXIT_ON_CLOSE);
-        //Κατέστρεψε το παράθυρο home
         this.dispose();
     }//GEN-LAST:event_showDataButtonActionPerformed
 
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
-        //Eνημερωτικό μήνυμα προς χρήστη
+        //Informative message to user
         int result = JOptionPane.showConfirmDialog(null, "Η εφαρμογή θα τερματιστεί. Είστε σίγουροι;", "Ενημέρωση", JOptionPane.YES_NO_OPTION);
 
-        //Aν ο χρήστης επιβεβαιώσει τον τερματισμό
+        //If the user confirms termination
         if (JOptionPane.YES_OPTION == result) {
-            //Καταστροφή παραθύρου
             dispose();
-            //Τερματισμός
             System.exit(0);
         }
     }//GEN-LAST:event_exitButtonActionPerformed
 
     private void manageDataButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manageDataButtonActionPerformed
-        //Δημιούργησε ένα αντικείμενο τύπου ManageData
         ManageData manageData = new ManageData();
-        //Κάνε το αντικείμενο τύπου ManageData ορατό (Οθόνη Διαχείρισης δεδομένων)
         manageData.setVisible(true);
-        //Κάνε το παράθυρο home όχι ορατό
         this.setVisible(false);
-        //Κλείσε το παράθυρο home
         this.setDefaultCloseOperation(this.EXIT_ON_CLOSE);
-        //Κατέστρεψε το παράθυρο home
         this.dispose();
     }//GEN-LAST:event_manageDataButtonActionPerformed
 
     private void showStatisticsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showStatisticsButtonActionPerformed
-        //Δημιούργησε ένα αντικείμενο τύπου ShowStatistics
         ShowStatistics showStatistics = new ShowStatistics();
-        //Κάνε το αντικείμενο τύπου showStatistics ορατό (Οθόνη προβοληλής στατιστικών στοιχείων)
         showStatistics.setVisible(true);
-        //Κάνε το παράθυρο home όχι ορατό
         this.setVisible(false);
-        //Κλείσε το παράθυρο home
         this.setDefaultCloseOperation(this.EXIT_ON_CLOSE);
-        //Κατέστρεψε το παράθυρο home
         this.dispose();
     }//GEN-LAST:event_showStatisticsButtonActionPerformed
 
     private void returnHomeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_returnHomeButtonActionPerformed
-        //Δημιούργησε ένα αντικείμενο τύπου Home
         About about = new About();
-        //Κάνε το αντικείμενο τύπου Home ορατό (Επιστροφή στην αρχική οθόνη)
         about.setVisible(true);
 
     }//GEN-LAST:event_returnHomeButtonActionPerformed
