@@ -2,7 +2,7 @@
   <artifact type="jar" name="Joker:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/Joker_jar</output-path>
     <root id="archive" name="Joker.jar">
-      <element id="module-output" name="Joker" />
+      <element id="module-output" name="Joker-App" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/junit/platform/junit-platform-engine/1.9.0/junit-platform-engine-1.9.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/eclipse/persistence/org.eclipse.persistence.moxy/2.7.10/org.eclipse.persistence.moxy-2.7.10.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/eclipse/persistence/org.eclipse.persistence.core/2.7.10/org.eclipse.persistence.core-2.7.10.jar" path-in-jar="/" />

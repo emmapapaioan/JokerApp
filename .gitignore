@@ -2,5 +2,5 @@
 /nbproject
 /statistics.pdf
 /dist
-.xml
-.log
+*.xml
+*.log
