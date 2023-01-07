@@ -32,14 +32,14 @@ public class ShowDataPerMonthFinal extends javax.swing.JFrame {
             }
         });
     }
-    
-    //Μέθοδος που ενημερώνει το monthTextField του jframe με ημερομηνία και έτος
+
+    //Method that updates jframe's monthTextField with date and year
     public void updateDateLabel(String month, String year){
         monthTextField.setHorizontalAlignment(JTextField.CENTER);
         monthTextField.setText(month+"  "+year);
     }
-    
-    //Μέθοδος δημιουργίας πινάκων με δεδομένα κληρώσεων
+
+    //Method to create arrays with draws data
     public void updateShowDataTable(int countDraws, String countTotalDivident, int countJackpot) {
         DefaultTableModel model=(DefaultTableModel) showDataTable.getModel();
         Object[] rowValues = {countDraws, countTotalDivident, countJackpot};
@@ -144,15 +144,10 @@ public class ShowDataPerMonthFinal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void returnButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_returnButtonActionPerformed
-        //Δημιούργησε ένα αντικείμενο τύπου Home
         ShowDataPerMonth showDataPerMonth = new ShowDataPerMonth();
-        //Κάνε το αντικείμενο τύπου Home ορατό (Επιστροφή στην αρχική οθόνη)
         showDataPerMonth.setVisible(true);
-        //Κάνε το παράθυρο Διαχείρισης δεδομένων όχι ορατό
         this.setVisible(false);
-        //Κλείσε το παράθυρο Διαχείρισης δεδομένων
         this.setDefaultCloseOperation(ShowDataPerMonthFinal.EXIT_ON_CLOSE);
-        //Κατέστρεψε το παράθυρο διαχείρισης δεδομένων
         this.dispose();
     }//GEN-LAST:event_returnButtonActionPerformed
 
@@ -162,21 +157,15 @@ public class ShowDataPerMonthFinal extends javax.swing.JFrame {
                         JOptionPane.YES_NO_OPTION);
 
         if (result == JOptionPane.YES_OPTION) {
-            //Τερματισμός
             System.exit(0);
         }
     }//GEN-LAST:event_formWindowClosing
 
     private void jHomeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jHomeButtonActionPerformed
-        //Δημιούργησε ένα αντικείμενο τύπου Home
         Home home = new Home();
-        //Κάνε το αντικείμενο τύπου Home ορατό (Επιστροφή στην αρχική οθόνη)
         home.setVisible(true);
-        //Κάνε το παράθυρο Διαχείρισης δεδομένων όχι ορατό
         this.setVisible(false);
-        //Κλείσε το παράθυρο Διαχείρισης δεδομένων
         this.setDefaultCloseOperation(ShowDataPerMonthFinal.EXIT_ON_CLOSE);
-        //Κατέστρεψε το παράθυρο διαχείρισης δεδομένων
         this.dispose();
     }//GEN-LAST:event_jHomeButtonActionPerformed
 
