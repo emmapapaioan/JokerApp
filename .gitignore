@@ -1,6 +1,6 @@
 # Default ignored files
 /shelf/
-/workspace.xml
+/.idea/workspace.xml
 /build
 /nbproject
 /statistics.pdf
@@ -13,3 +13,5 @@
 !derby.properties
 /target/
 /out/*
+derby.log
+/db
