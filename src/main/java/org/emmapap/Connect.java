@@ -4,6 +4,7 @@ import org.apache.derby.client.am.SqlException;
 import org.apache.derby.drda.NetworkServerControl;
 //import org.apache.derby.iapi.sql.Statement;
 
+import javax.swing.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -24,7 +25,7 @@ public class Connect {
             server.start(null);
             con = DriverManager.getConnection(URL, "joker", "joker");
         } catch (Exception e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Σφάλμα κατά τη σύνδεση με το server. Πραγματοποιήστε επανεκκίνηση του προγράμματος.", "Σφάλμα", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
