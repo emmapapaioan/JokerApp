@@ -63,7 +63,7 @@ The GANTT chart was then implemented. For project management and collaboration, 
 The application runs with all its capabilities through the Netbeans IDE. As an alternative to the releases, there is a version of the JokerGame-Stats application.
 
 
-## **Στιγμιότυπα εφαρμογής**
+## **Screenshots of the application**
 <img src="https://user-images.githubusercontent.com/108992250/183464013-6f24b7e6-c50d-4559-af22-32ccc09c83ce.jpg" width=700 />
 <img src="https://user-images.githubusercontent.com/108992250/183464206-da5f7dd9-d458-4552-9e79-0c078d5b311b.jpg" width=700 />
 <img src="https://user-images.githubusercontent.com/108992250/183942140-02e63960-a0e1-4a9c-8acb-b8e7e9fb1cd3.png" width=700 />
