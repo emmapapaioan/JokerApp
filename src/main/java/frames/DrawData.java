@@ -41,18 +41,17 @@ public class DrawData extends JFrame {
 
     public Draws publicDraw = new Draws();
 
-    //Μέθοδος που ενημερώνει τα δεδομένα μιας κλήρωσης
+    //Method that updates a draw's data
     public void updateDrawData(Draws draw) {
         this.publicDraw = draw;
     }
 
-    //Μέθοδος που αποθηκεύει δεδομένα σε JTable και Jlabel
+    //Method that stores data in JTable and Jlabel
     public void UpdateResultTable(Draws draw) {
 
-        //Δημιουργία εγγραφής τύπου resultTable
         DefaultTableModel model = (DefaultTableModel) resultTable.getModel();
 
-        //Δημιουργία μεταβλητών που παίρνουν ως όρισμα τους νικητήριους αριθμούς
+        //Create variables that take the winning numbers as arguments
         String wn1 = Integer.toString(draw.getWinningNumber1());
         String wn2 = Integer.toString(draw.getWinningNumber2());
         String wn3 = Integer.toString(draw.getWinningNumber3());
@@ -60,7 +59,7 @@ public class DrawData extends JFrame {
         String wn5 = Integer.toString(draw.getWinningNumber5());
         String wn6 = Integer.toString(draw.getBonusNumber());
 
-        //Περνάμε τους νικητήριους αριθμούς στα αντίστοιχα jlabel
+        //Pass the winning numbers to the corresponding jlabels
         winningNumber1.setText(wn1);
         winningNumber2.setText(wn2);
         winningNumber3.setText(wn3);
@@ -68,18 +67,18 @@ public class DrawData extends JFrame {
         winningNumber5.setText(wn5);
         bonusNumber.setText(wn6);
 
-        //Περνάμε τον αριθμό κλήρωσης στο drawIdLabel
+        //Pass the draw number to drawIdLabel
         drawIdLabel.setFont(new java.awt.Font("Dialog", 1, 15));
         drawIdLabel.setForeground(new java.awt.Color(222, 222, 222));
         drawIdLabel.setText("Aριθμός κλήρωσης: " + draw.getId());
 
-        //Περνάμε τα ζητούμενα δεδομένα στον πίνακα που θα εμφανιστεί στο χρήστη
+        //We pass the requested data to the table that will be displayed to the user
         for (PrizeCategory prizeCategory : draw.prizeCategories) {
-            //Δίνουμε ονόματα στις κατηγορίες επιτυχιών
+            //Give names to the success categories
             prizeCategory.setPrizeCategoryName();
             model.addRow(new Object[]{prizeCategory.getPrizeCategoryName(), prizeCategory.getWinners(), String.valueOf(prizeCategory.getFormatedNumber(prizeCategory.getDivident()))});
         }
-        //Επιλογή να ταξινομείται αυτόματα ο πίνακας όταν ο χρήστης πατήσει κάποια επικεφαλίδα
+        //Option to automatically sort the table when the user clicks on a heading
         resultTable.setAutoCreateRowSorter(true);
     }
 
@@ -252,34 +251,33 @@ public class DrawData extends JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void saveDataButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveDataButtonActionPerformed
-        //Εκκίνηση server για τη ΒΔ
+        //Starting server for the db
         //Connect con = new Connect();
         //con.connect();
 
-        //Δημιουργία του EntityManagerFactory
+
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("JokerGameStatsPU");
-        //Δημιουργία του EntityManager
         EntityManager em = emf.createEntityManager();
 
-        //Έναρξη διαδικασίας προσπάθειας αποθήκευσης δεδομένων στη βάση δεδομένων
+        //Start process of trying to save data to database
         try {
-            //Έναρξη δοσοληψίας με τη βάση δεδομένων
+            //Start transaction with database
             em.getTransaction().begin();
             Query findDraw = em.createNamedQuery("Draw.findById", Draw.class);
             findDraw.setParameter("id", publicDraw.getId());
             List<Draw> resultList = findDraw.getResultList();
 
-            //Aν τα επιλεγμένα δεδομένα δεν υπάρχουν ήδη στη βάση δεδομένων
+            //If the selected data does not already exist in the database
             if (resultList.isEmpty()) {
 
-                //Aποθήκευση δεδομένων στον πίνακα Draw στη βάση δεδομένων
+                //Save data to the Draw table in the database
                 java.sql.Date sqlDate = new java.sql.Date(publicDraw.getDrawTime());//Mετατροπή ημερομηνίας σε μορφή ημερομηνίας που αναγνωρίζει η βάση δεδομένων
                 Draw drawEntity = new Draw(publicDraw.getId(), sqlDate, publicDraw.getWinningNumber1(),
                         publicDraw.getWinningNumber2(), publicDraw.getWinningNumber3(), publicDraw.getWinningNumber4(),
                         publicDraw.getWinningNumber5(), publicDraw.getBonusNumber());
                 em.persist(drawEntity);
 
-                //Αποθήκευση δεδομένων στον πίνακα Prizecategory στη βάση δεδομένων
+                //Save data to Prizecategory table in database
                 for (PrizeCategory prc : publicDraw.prizeCategories) {
                     Prizecategory prizeCategory = new Prizecategory();
                     PrizecategoryPK prizeCategoryPK = new PrizecategoryPK();
@@ -293,25 +291,25 @@ public class DrawData extends JFrame {
                     em.persist(prizeCategory);
                 }
 
-                //Τερματισμός δοσοληψίας
+                //End of transaction
                 em.getTransaction().commit();
-                //Ενημερωτικό μήνυμα ότι τα δεδομένα αποθηκεύτηκαν επιτυχώς
+                //Informative message that the data was saved successfully
                 JOptionPane.showMessageDialog(null, "Η κλήρωση αποθηκεύτηκε επιτυχώς στη βάση δεδομένων. ", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
-                //Aν τα επιλεγμένα δεδομένα υπάρχουν ήδη στη βάση δεδομένων
+                //If the selected data already exists in the database
             } else {
-                //Τερματισμός δοσοληψίας
+                //End of transaction
                 em.getTransaction().commit();
-                //Εμφάνισε ενημερωτικό μήνυμα
+                //Display an informational message
                 JOptionPane.showMessageDialog(null, "Tα δεδομένα που επιλέξατε υπάρχουν ήδη στη βάση δεδομένων. ", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
             }
         } catch (Exception e) {
-            //Ενημερωτικό μήνυμα ότι δεν ήταν επιτυχής η σύνδεση με τη βάση δεδομένων
+            //Informational message that the connection to the database was not successful
             JOptionPane.showMessageDialog(null, "Η αποθήκευση της κλήρωσης δεν ήταν επιτυχής. Προσπαθήστε ξανά.  ", "Πρόβλημα σύνδεσης με βάση δεδομένων", JOptionPane.INFORMATION_MESSAGE);
         }
 
-        //Καταστροφή του EntityManager
+        //Destroy the EntityManager
         em.close();
-        //Καταστροφή του EntityManagerFactory
+        //Destroy the EntityManagerFactory
         emf.close();
         //con.disconnect();
     }//GEN-LAST:event_saveDataButtonActionPerformed

@@ -44,10 +44,10 @@ public class DynamicDrawData extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
-    //Μέθοδος δημιουργίας πινάκων με δεδομένα κληρώσεων
+    //Method to create arrays with draw data
     public void updateTables(ArrayList<Draws> draws) {
 
-        //Για κάθε κλήρωση φτιάξε ένα πίνακα με τα κατάλληλα δεδομένα
+        //For each draw make a table with the appropriate data
         for (Draws draw : draws) {
             String drawId = String.valueOf(draw.getId());
             DefaultTableModel model = (DefaultTableModel) resultsTable.getModel();
@@ -158,40 +158,39 @@ public class DynamicDrawData extends JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void saveDataButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveDataButtonActionPerformed
-        //Δημιουργία του EntityManagerFactory
+
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("JokerGameStatsPU");
-        //Δημιουργία του EntityManager
         EntityManager em = emf.createEntityManager();
 
-        //Έναρξη δοσοληψίας με τη βάση δεδομένων
+        //Start transaction with database
         em.getTransaction().begin();
 
-        int count = 0;//Βοηθητική μεταβλητή που μετράει πόσες κληρώσεις αποθηκεύτηκαν
+        int count = 0;//Helper variable that counts how many draws were saved
         int prizecategory = 0;
 
-        //Έναρξη διαδικασίας αποθήκευσης δεδομένων κληρώσεων στη βάση δεδομένων
+        //Start process of saving draw data to database
         for (Draws draw : draws) {
-            //Δημιουργία κατάλληλης ερώτησης προς βάση δεδομένων 
+            //Create appropriate query to database
             Query findDraws = em.createNamedQuery("Draw.findById", Draw.class);
             findDraws.setParameter("id", draw.getId());
             List<Draw> resultList = findDraws.getResultList();
 
-            //Aν η κλήρωση δεν είναι ήδη αποθηκευμένη στη βάση δεδομένων
+            //If the draw is not already stored in the database
             if (resultList.isEmpty()) {
-                count++;//Υπολογισμός κληρώσεων που αποθηκεύονται στη βάση δεδομένων
-                //Aποθήκευση δεδομένων στον πίνακα Draw στη βάση δεδομένων
-                java.sql.Date sqlDate = new java.sql.Date(draw.getDrawTime());//Mετατροπή ημερομηνίας σε μορφή ημερομηνίας που αναγνωρίζει η βάση δεδομένων
+                count++;//Calculate draws stored in database
+                //Save data to the Draw table in the database
+                java.sql.Date sqlDate = new java.sql.Date(draw.getDrawTime());//Convert the date to a date format recognized by the database
                 Draw drawPj = new Draw(draw.getId(), sqlDate, draw.getWinningNumber1(), draw.getWinningNumber2(), draw.getWinningNumber3(),
                         draw.getWinningNumber4(), draw.getWinningNumber5(), draw.getBonusNumber());
                 em.persist(drawPj);
                 try {
-                    //Απευθείας ενημέρωση βάσης δεδομένων
+                    //Direct database update
                     em.flush();
                 } catch (TransactionRequiredException ex) {
                     System.out.println("Πρόβλημα στην απευθείας ενημέρωση της βάσης. Τα δεδομένα θα αποθηκευτούν όταν γίνει τερματισμός δοσοληψίας.");
                 }
 
-                //Αποθήκευση δεδομένων στον πίνακα Prizecategory στη βάση δεδομένων
+                //Save data to Prizecategory table in database
                 for (int i = 0; i < 8; i++) {
                     prizecategory++; //debug
                     Prizecategory prizeCategory = new Prizecategory();
@@ -201,8 +200,8 @@ public class DynamicDrawData extends JFrame {
                     prizeCategory.setDraw(drawPj);
                     prizeCategory.setName(draw.prizeCategories.get(i).getPrizeCategoryName());
                     prizeCategory.setWinners(draw.prizeCategories.get(i).getWinners());
-                    //Οι κληρώσεις 1-209 είναι αποθηκευμένες σε δραχμές οπότε πρέπει να τις μετατρέψουμε σε ευρώ
-                    //θεωρώντας ότι η τότε συναλλαγματική αξία ήταν 1EURO=340.75GRD
+                    //Draws 1-209 are stored in drachmas so we need to convert them to euros
+                    //considering that the then exchange value was 1EURO=340.75GRD
                     if (draw.getId() >= 1 && draw.getId() <= 209) {
                         prizeCategory.setDivident(Math.round((draw.prizeCategories.get(i).getDivident() / 340.75) * 100.0) / 100.0);//Στρογγυλοποίηση στα 2 δεκαδικά ψηφία
                     } else {
@@ -211,7 +210,7 @@ public class DynamicDrawData extends JFrame {
                     prizeCategory.setPrizecategoryPK(prizeCategoryPK);
                     em.persist(prizeCategory);
                     try {
-                        //Απευθείας ενημέρωση βάσης δεδομένων
+                        //Direct database update
                         em.flush();
                     } catch (TransactionRequiredException ex) {
                         System.out.println("Πρόβλημα στην απευθείας ενημέρωση της βάσης δεδομένων. Τα δεδομένα θα αποθηκευτούν όταν γίνει τερματισμός δοσοληψίας.");
@@ -219,20 +218,20 @@ public class DynamicDrawData extends JFrame {
                 }
             }
         }
-        //Τερματισμός δοσοληψίας
+        //End transaction
         em.getTransaction().commit();
-        //Καταστροφή του EntityManager
+        //Destroy the EntityManager
         em.close();
-        //Καταστροφή του EntityManagerFactory
+        //Destroy EntityManagerFactory
         emf.close();
 
-        //Eνημέρωση χρήστη για την αποθήκευση στη βάση δεδομένων
+        //User update for the store in db
         if (count == 0) {
-            //Ενημερωτικό μήνυμα ότι τα δεδομένα αποθηκεύτηκαν επιτυχώς
+            //Informative message that the data are allready stored in the db
             JOptionPane.showMessageDialog(null, "Όλες οι επιλεγμένες κληρώσεις\nείναι ήδη στη βάση δεδομένων. ", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
 
         } else if (count > 0) {
-            //Ενημερωτικό μήνυμα ότι τα δεδομένα αποθηκεύτηκαν επιτυχώς
+            //Informative message that the data was saved successfully
             if (count == 1) {
                 JOptionPane.showMessageDialog(null, "Μία κλήρωση αποθηκεύτηκε επιτυχώς στη βάση δεδομένων.", "Ενημέρωση", JOptionPane.INFORMATION_MESSAGE);
             } else {
