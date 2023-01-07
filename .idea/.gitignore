@@ -7,4 +7,6 @@
 /dist
 .xml
 .log
-/.idea
+/.idea/
+!derby.log
+!derby.properties
