@@ -34,7 +34,7 @@ public class ShowDataPerMonth extends javax.swing.JFrame {
     public ShowDataPerMonth() {
         initComponents();
         setTitle("JokerGame-Stats");
-        //Βοηθητικό comboBox για αποθήκευση των μηνών ως αριθμούς.
+        //Helper comboBox to store the months as numbers
         invisibleComboBox.setVisible(false);
         comboYears();
 
