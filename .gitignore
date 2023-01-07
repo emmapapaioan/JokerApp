@@ -9,10 +9,9 @@
 .xml
 .log
 /.idea/
-!derby.log
-!derby.properties
 /target/
 /out/*
 derby.log
+derby.properties
 /db
 src/test
