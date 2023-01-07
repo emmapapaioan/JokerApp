@@ -2,4 +2,10 @@
 /nbproject
 /statistics.pdf
 /dist
-derby.log
+*.xml
+*.log
+!derby.log
+!derby.properties
+!pom.xml
+/out
+/target
