@@ -11,5 +11,5 @@
 /.idea/
 !derby.log
 !derby.properties
-/target
+/target/
 /out/*
