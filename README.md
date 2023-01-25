@@ -48,11 +48,12 @@ Scrum practice was applied to organize the team and assign responsibilities. Fir
 <summary>Click to see more details.</summary>
 <br>
 <ul>
-<li>Only Java, JDK 1.8 and Netbeans 8.2 IDE were used for code writing.</li>
-<li>For the database Apache Derby - 10.16.1.1.</li>
+<li>Java, JDK 1.8 and Netbeans 8.2 IDE were used for code writing.</li>
+<li>For the database Apache Derby was used - 10.16.1.1.</li>
 <li>For the Graphical User Interface (GUI) the Swing tool was used.</li>
 <li>The Trello tool was used for project management and team collaboration.</li>
 <li>The ProjectLibre application was used to construct the GANTT chart.</li>
+<li>Excel application was used to construct the BurnDown chart.</li>
 </ul>
 </details>
 
