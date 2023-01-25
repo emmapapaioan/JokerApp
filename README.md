@@ -39,8 +39,8 @@ Finally if user selects the Exit button, the application terminates.
 
 ## **Project management**
 
-Scrum practice was applied to organize the team and assign responsibilities. First the Product Backlog was defined. Through voting in Planning Poker, the approximate man-hours of project development as well as the prioritization of responsibilities were decided.
-The GANTT chart was then implemented. For project management and collaboration, the Trello tool was used throughout.
+Scrum practice was applied to organize the team and assign responsibilities. First the Product Backlog was defined. Through voting in Planning Poker, the approximate man-hours of project development as well as the prioritization of responsibilities were decided. Then the 3 splits where defined.
+Furthermore, the GANTT and the BurnDown chart were implemented. For project management and collaboration, the Trello tool was used throughout.
 
 
 ## **Tools Used**
