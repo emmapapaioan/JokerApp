@@ -1,7 +1,7 @@
 # **JokerGameStats** <img style="vertical-align:down" align="left" src="https://user-images.githubusercontent.com/108992250/210183286-d1f3bcff-1602-4310-9c56-4a5422f70622.jpg" width=50/>
 
 
-The application was implemented as assignment for the Hellenic Open University. The user can view and manage data about draws of Joker game (a lucky game by the company OPAP). Processing data are obtained from the service web api.opap.gr/.
+The application was implemented as an assignment for the Hellenic Open University. The user can view and manage data about draws of Joker game (a lucky game by the company OPAP). Processing data were obtained from the service web api.opap.gr/.
 
 ## **Team Members**
 
