@@ -29,7 +29,7 @@ If the user selects the View data button, a list of available years is displayed
 
 ## **3. View Statistics**
 
-If user selects the Show statistics button, the statistics of drawn numbers (frequency of occurrence of numbers, frequency of occurrence of joker numbers, average winnings per category) in a given date range from the api call https://api. opap.gr/games/v1.0/5104/statistics. Then the user is the one who can choose to display statistical data either drawn from the api or from the database in a date range that the user wants.
+If user selects the Show statistics button, the statistics of drawn numbers (frequency of occurrence of numbers, frequency of occurrence of joker numbers, average winnings per category) in a given date range from the api call https://api.opap.gr/games/v1.0/5104/statistics. Then the user is the one who can choose to display statistical data either drawn from the api or from the database in a date range that the user wants.
 Then the user has the possibility, if one wants, to print the projection table in pdf.
 Also on this screen the user can press the View statistical data in graphical form button which takes the user to a screen where can choose which data are wanted to be produced in a graph. Frequency of occurrence of numbers, frequency of occurrence of joker numbers and average winnings per category. User also has the ability to select dates from which data will be extracted from the database.
 </details>
