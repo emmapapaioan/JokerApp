@@ -70,7 +70,7 @@ To run the JokerApp application, please follow these steps:
 <li>Run the application by running the following command: <code>java JokerApp</code></li>
 </ul>
 
-#### Alternatively, you can download a pre-built version of the application from the "Releases" section of the repository. Please note that Java must still be installed on your machine to run the application.
+#### Alternatively, you can download a pre-built version of the application from the "Releases" section of the repository or by clicking the following link https://github.com/emmapapaioan/JokerApp/releases/tag/JokerGame-Stats.v01. Please note that Java must still be installed on your machine to run the application.
 
 ## **Screenshots of the application**
 <img src="https://user-images.githubusercontent.com/108992250/183464013-6f24b7e6-c50d-4559-af22-32ccc09c83ce.jpg" width=700 />
