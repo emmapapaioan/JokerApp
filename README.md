@@ -17,7 +17,7 @@ Please note that this project was developed at the early stages of my programmin
 ## **System Description**
 Each user has the following options:
 
-## **1. Data management**
+### **1. Data management**
 
 If the Data management button is selected, a screen appears where the user can a) view their selection data or b) delete their selection data.
 a) If one wants to display data, then the user can select the ID of a game, so that corresponding details for a specific joker game can be displayed (winning column, number of hits, winnings per hit), or choose between some dates, so to view details of the games that have taken place within the selected dates.
@@ -26,19 +26,19 @@ Also the user has the possibility to search which draws were made within a range
 b) If one wants to delete data then one chooses between "Delete game data" or "Delete game data within date range". If one selects one of the two buttons, then a verification question appears with confirmation for the user. Only in case of confirmation by the user are the respective data finally deleted.
 
 
-## **2. View Data**
+### **2. View Data**
 
 If the user selects the View data button, a list of available years is displayed (available years are those stored in the database). The user then selects year, for which a list of available months is displayed (available months are those stored in the database). Then user selects the month and then a new page shows the aggregated data of the specific month for the specific year (how many games were played, how much total money was distributed, how many JACKPOTS were made).
 
 
-## **3. View Statistics**
+### **3. View Statistics**
 
 If user selects the Show statistics button, the statistics of drawn numbers (frequency of occurrence of numbers, frequency of occurrence of joker numbers, average winnings per category) in a given date range from the api call https://api.opap.gr/games/v1.0/5104/statistics. Then the user is the one who can choose to display statistical data either drawn from the api or from the database in a date range that the user wants.
 Then the user has the possibility, if one wants, to print the projection table in pdf.
 Also on this screen the user can press the View statistical data in graphical form button which takes the user to a screen where can choose which data are wanted to be produced in a graph. Frequency of occurrence of numbers, frequency of occurrence of joker numbers and average winnings per category. User also has the ability to select dates from which data will be extracted from the database.
 </details>
 
-## **4. Exit**
+### **4. Exit**
 Finally if user selects the Exit button, the application terminates.
 
 ## **Project management**
