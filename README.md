@@ -11,6 +11,8 @@ The application was implemented as an assignment for the Hellenic Open Universit
 - Lymberis Dimitrios
 - Hatziioannou Ioannis
 
+## Notes
+Please note that this project was developed at the early stages of my programming journey. As such, the code may not adhere to all the best practices and conventions typically associated with clean code. However, I recognize the importance of maintaining clean and efficient code, and I plan to refactor this project in the future to improve its readability and performance.
 
 ## **System Description**
 Each user has the following options:
@@ -51,7 +53,7 @@ Scrum practice was applied to organize the team and assign responsibilities. Fir
 <br>
 <ul>
 <li>Java, JDK 1.8 and Netbeans 8.2 IDE were used for code writing.</li>
-<li>For the database Apache Derby - 10.16.1.1 was used .</li>
+<li>For the database Apache Derby - 10.16.1.1 was used.</li>
 <li>For the Graphical User Interface (GUI) the Swing tool was used.</li>
 <li>The Trello tool was used for project management and team collaboration.</li>
 <li>The ProjectLibre application was used to construct the GANTT chart.</li>
