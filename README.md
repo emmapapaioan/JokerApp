@@ -1,4 +1,4 @@
-# **JokerGameStats** <img style="vertical-align:down" align="left" src="https://user-images.githubusercontent.com/108992250/210183286-d1f3bcff-1602-4310-9c56-4a5422f70622.jpg" width=50/>
+# **JokerApp** <img style="vertical-align:down" align="left" src="https://user-images.githubusercontent.com/108992250/210183286-d1f3bcff-1602-4310-9c56-4a5422f70622.jpg" width=50/>
 
 https://user-images.githubusercontent.com/108992250/219718220-00b0d0de-3fbc-43a8-8c89-f2b1f82c7740.mp4
 
