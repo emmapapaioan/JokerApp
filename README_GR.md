@@ -1,4 +1,4 @@
-# **JokerGameStats** <img style="vertical-align:down" align="left" src="https://user-images.githubusercontent.com/108992250/210183286-d1f3bcff-1602-4310-9c56-4a5422f70622.jpg" width=50/>
+# **JokerApp** <img style="vertical-align:down" align="left" src="https://user-images.githubusercontent.com/108992250/210183286-d1f3bcff-1602-4310-9c56-4a5422f70622.jpg" width=50/>
 
 
 Η εφαρμογή υλοποιήθηκε στα πλαίσια της 3ης Γραπτής Εργασίας, της θεματικής ενότητας ΠΛΗ24, του Ελληνικού Ανοιχτού Πανεπιστημίου.
