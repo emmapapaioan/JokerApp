@@ -11,9 +11,6 @@ The application was implemented as an assignment for the Hellenic Open Universit
 - Lymberis Dimitrios
 - Hatziioannou Ioannis
 
-## Notes
-Please note that this project was developed at the early stages of my programming journey. As such, the code may not adhere to all the best practices and conventions typically associated with clean code. However, I recognize the importance of maintaining clean and efficient code, and I plan to refactor this project in the future to improve its readability and performance.
-
 ## **System Description**
 Each user has the following options:
 
