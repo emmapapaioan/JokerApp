@@ -37,7 +37,7 @@ To delete data, users can:
 
 ### **2. View Data**
 
-If the user selects the View data button, a list of available years is displayed (available years are those stored in the database). The user then selects year, for which a list of available months is displayed (available months are those stored in the database). Then user selects the month and then a new page shows the aggregated data of the specific month for the specific year (how many games were played, how much total money was distributed, how many JACKPOTS were made).
+When the "View Data" button is selected, users are shown a list of years available in the database. Upon selecting a year, a list of available months (also from the database) is displayed. After choosing a month, users are taken to a new page that displays aggregated data for that specific month and year, including the number of games played, total money distributed, and the number of JACKPOTS awarded.
 
 
 ### **3. View Statistics**
