@@ -62,7 +62,7 @@ Scrum practice was applied to organize the team and assign responsibilities. Fir
 </details>
 
 
-## **Running the Application**
+## **Building and Running from Source**
 To run the JokerApp application, please follow these steps:
 <ul>
 <li>Ensure that Java is installed on your machine.</li>
@@ -72,7 +72,7 @@ To run the JokerApp application, please follow these steps:
 <li>Run the application by running the following command: <code>java JokerApp</code></li>
 </ul>
 
-#### Download and run the app
+## **Running the Pre-built Application**
 Alternatively, you can download a pre-built version of the application from the "Releases" section of the repository or by clicking here <a href="https://github.com/emmapapaioan/JokerApp/releases/tag/JokerGame-Stats.v01" target="_blank">JokerApp Release</a>. Please note that Java must still be installed on your machine to run the application.
 
 ## **Screenshots of the application**
