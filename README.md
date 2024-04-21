@@ -16,11 +16,23 @@ Each user has the following options:
 
 ### **1. Data management**
 
-If the Data management button is selected, a screen appears where the user can a) view their selection data or b) delete their selection data.
-a) If one wants to display data, then the user can select the ID of a game, so that corresponding details for a specific joker game can be displayed (winning column, number of hits, winnings per hit), or choose between some dates, so to view details of the games that have taken place within the selected dates.
-Then the user has the possibility, if one wishes, to save the projection data (in a suitable database, as it is enough if it is not already saved).
-Also the user has the possibility to search which draws were made within a range of dates.
-b) If one wants to delete data then one chooses between "Delete game data" or "Delete game data within date range". If one selects one of the two buttons, then a verification question appears with confirmation for the user. Only in case of confirmation by the user are the respective data finally deleted.
+If the "Data Management" button is selected, a screen appears where the user can:
+- **View Selection Data**
+- **Delete Selection Data**
+
+### a) Viewing Data
+To display data, users can:
+- Select a game ID to view specific details of a Joker game, including the winning column, number of hits, and winnings per hit.
+- Choose a date range to see details of games that occurred within those dates.
+- Save the displayed data to a suitable database, if it has not been saved already.
+- Search for draws that took place within a specified date range.
+
+### b) Deleting Data
+To delete data, users can:
+- Select "Delete game data" or "Delete game data within date range."
+- Upon selection, a confirmation prompt appears for user verification.
+- Data is permanently deleted only after the user confirms the action.
+
 
 
 ### **2. View Data**
@@ -30,9 +42,12 @@ If the user selects the View data button, a list of available years is displayed
 
 ### **3. View Statistics**
 
-If user selects the Show statistics button, the statistics of drawn numbers (frequency of occurrence of numbers, frequency of occurrence of joker numbers, average winnings per category) in a given date range from the api call https://api.opap.gr/games/v1.0/5104/statistics. Then the user is the one who can choose to display statistical data either drawn from the api or from the database in a date range that the user wants.
-Then the user has the possibility, if one wants, to print the projection table in pdf.
-Also on this screen the user can press the View statistical data in graphical form button which takes the user to a screen where can choose which data are wanted to be produced in a graph. Frequency of occurrence of numbers, frequency of occurrence of joker numbers and average winnings per category. User also has the ability to select dates from which data will be extracted from the database.
+
+When the "Show Statistics" button is selected, users can view statistics on drawn numbers, including the frequency of occurrence of numbers and joker numbers, as well as average winnings per category, from the API call https://api.opap.gr/games/v1.0/5104/statistics. Users can choose to display these statistics from either the API or a database for a selected date range.
+
+Additionally, users have the option to print the projection table in PDF format.
+
+On the same screen, users can press the "View Statistical Data in Graphical Form" button, which navigates to a screen where they can select data to be graphically represented, such as the frequency of numbers and joker numbers and average winnings per category. Users can also select the date range from which data will be extracted from the database.
 </details>
 
 ### **4. Exit**
