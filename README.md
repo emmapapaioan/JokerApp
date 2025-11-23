@@ -3,7 +3,7 @@
 https://user-images.githubusercontent.com/108992250/219718220-00b0d0de-3fbc-43a8-8c89-f2b1f82c7740.mp4
 
 <br>
-The application was implemented as an assignment for the Hellenic Open University. The user can view and manage data about draws of Joker game (a lucky game by the company OPAP). Processing data were obtained from the service web api.opap.gr/.
+The application was implemented as an assignment for the Hellenic Open University. The user can view and manage data about draws of Joker game (a lucky game by the company OPAP). Processing data were obtained from the service web api.opap.gr.
 
 ## **Team Members**
 
@@ -98,4 +98,5 @@ Alternatively, you can download a pre-built version of the application from the 
 <img src="https://user-images.githubusercontent.com/108992250/183465797-b9abe222-b1d0-42c4-bdc4-de99256ca1f7.png" width=700 />
 <img src="https://user-images.githubusercontent.com/108992250/183465799-557cc5e4-b41e-4f50-bd10-52d61eb5aeed.png" width=700 />
 <img src="https://user-images.githubusercontent.com/108992250/183466256-232e14fd-368d-4567-ac6c-7a234730054f.png" width=700 />
+
 
